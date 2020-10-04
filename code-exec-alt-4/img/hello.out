@@ -1,0 +1,82 @@
+PC_Setup(bi=0x00107000,sp=0x00106efc)
+PC_Setup::detect_memory()
+PC_Setup::calibrate_timers()
+PC_Setup::detect_pci()
+PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:2.0] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:2.0] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:2.0] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:2.0] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:3.0] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:3.0] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:3.0] reports implausible region (starting at zero). Ignoring!
+PCI: device [0:3.0] reports implausible region (starting at zero). Ignoring!
+
+Setting up this machine as follows: 
+  Processor:    1 x IA32 at 2505 MHz (BUS clock = 125 MHz)
+  Memory:       262144 Kbytes [0x00000000:0x10000000]
+  User memory:  261820 Kbytes [0x00000000:0x0ffaf000]
+  PCI aperture: 28356 Kbytes [0xfd000000:0xfebb1000]
+  Node Id:      will get from the network!
+  Position:     will get from the network!
+  Setup:        21888 bytes
+  APP code:     28672 bytes	data: 448 bytes
+setup_idt(idt=0x0ffff000)
+setup_gdt(gdt=0x0fffe000)
+setup_sys_pt(pmm={idt=0x0ffff000,gdt=0x0fffe000,pt=0x0fffd000,pd=0x0fffc000,info
+=0x0fffb000,tss0=0x0fffa000,mem=0x0ffba000,io=0x0ffb3000,sysc=0x0ffb3000,sysd=0x
+0ffb3000,syss=0x0ffaf000,memb=0x00000000,memt=0x0ffaf000,fr1b=0x00007000,fr1t=0x
+000a0000,fr2b=0x00100000,fr2t=0x00400000},code_size=0,data_size=0,stack_size=4)
+setup_sys_pd(pmm={idt=0x0ffff000,...},mem_base=0x00000000,mem_top=0x0ffaf000,io_
+base=0xfd000000,io_top=0xfebb1000)
+setup_tss(tss0=0xff405000)
+PC_Setup::load_app()
+PC_Setup::call_next(ip=0x00000030,sp=0xff7c3ff8) => APPLICATION
+Init_System()
+CPU::init()
+MMU::init()
+MMU::free(frame=0x00007000,color=0,n=153)
+MMU::free(frame=0x00100000,color=0,n=768)
+MMU::free(frame=0x00401000,color=0,n=64430)
+PMU::init()
+MMU::alloc(frames=68,color=0) => 0x0005c000
+Heap(addr=0x0005c000,bytes=278528) => 0x00400044
+Machine::init()
+IC::init()
+Timer::init()
+PCI::init(pmm.io_mem=0xfd000000)
+Flash::init(a=720896,s=1048576)
+MMU::alloc(frames=1,color=0) => 0x0005b000
+Segment(bytes=1048576,phy_addr=0x000b0000,flags=0x00000010) [Chunk::_pt=0x0005b0
+00] => 0x0009ffec
+Address_Space(pd=0x0fffc000) [Directory::pd=0x0fffc000] => 0xff7c3f2c
+Address_Space::attach(this=0xff7c3f2c,seg=0x0009ffec) => 0x10000000
+Heap(addr=0x10000000,bytes=1048576) => 0x0009ffd8
+~Address_Space(this=0xff7c3f2c) [Directory::pd=0x0fffc000]
+Alarm::init()
+Thread::init()
+Thread(entry=0x00000038,state=0,priority=0,stack={b=0x0009bf98,s=16384},context=
+{b=0x0009ff64,{eflags=0x200,eax=0,ebx=0,ecx=0,edx=0,esi=0,edi=0,ebp=0x00000000,e
+sp=0x0009ff64,eip=0x00000038,esp3=0,cs=8,ccs=8,cds=10,ces=10,cfs=10,cgs=10,css=1
+0,cr3=0x0fffc000}}) => 0x0009ff9c
+Thread(entry=0x00001aca,state=1,priority=2147483646,stack={b=0x00097f6c,s=16384}
+,context={b=0x0009bf38,{eflags=0x200,eax=0,ebx=0,ecx=0,edx=0,esi=0,edi=0,ebp=0x0
+0000000,esp=0x0009bf38,eip=0x00001aca,esp3=0,cs=8,ccs=8,cds=10,ces=10,cfs=10,cgs
+=10,css=10,cr3=0x0fffc000}}) => 0x0009bf70
+Init_Application()
+MMU::alloc(frames=84,color=0) => 0x00007000
+MMU::alloc(frames=768,color=0) => 0x00100000
+MMThread::yield(running=0x0009ff9c)
+U::alloc(frames=64430,color=0) => 0x00401000
+Init_First()
+Hello world!
+Thread::exit(status=0) [running=0x0009ff9c]
+Thread::dispatch(prev=0x0009ff9c,next=0x0009bf70)
+Thread::yield(running=0x0009bf70)
+The last thread has exited!
+Rebooting the machine ...
