@@ -96,7 +96,7 @@ COMP_PREFIX		= $($(ARCH)_COMP_PREFIX)
 pc_CC_FLAGS		:= -m32 -Wa,--32
 pc_AS_FLAGS		:= --32
 pc_LD_FLAGS		:= -m elf_i386
-pc_EMULATOR		= qemu-system-i386 -smp $(CPUS) -m $(MEM_SIZE)k -nographic -no-reboot -drive format=raw,index=0,if=floppy,read-only,file=
+pc_EMULATOR		= qemu-system-i386 -smp $(CPUS) -m $(MEM_SIZE)k -nographic -vga std -no-reboot -drive format=raw,index=0,if=floppy,read-only,file=
 pc_DEBUGGER		:= gdb
 pc_FLASHER		:=
 pc_MAGIC		:= --nmagic

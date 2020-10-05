@@ -23,13 +23,13 @@ int something()
 
 int main()
 {
-    cout << "Producer x Consumer" << endl;
+    cout << "FLASH TESTER" << endl;
 
-    Thread * something = new Thread(&something);
+    Thread * some = new Thread(&something);
 
-    cout << "TESTING" << something << endl;
+    cout << "TESTING" << some << endl;
 
-    delete something;
+    delete some;
 
     return 0;
 }

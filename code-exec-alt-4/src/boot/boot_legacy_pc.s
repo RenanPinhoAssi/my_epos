@@ -2,6 +2,10 @@
 # 1 "<built-in>"
 # 1 "<command-line>"
 # 1 "boot_legacy_pc.S"
+# 1 "boot_legacy_pc.S"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "boot_legacy_pc.S"
 ;==============================================================================
 ; EPOS BOOT STRAP
 ;

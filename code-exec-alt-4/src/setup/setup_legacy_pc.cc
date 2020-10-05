@@ -478,7 +478,7 @@ void PC_Setup::build_pmm()
     si->pmm.free1_base = MMU::align_page(si->lm.app_code + si->lm.app_code_size);
     si->pmm.free1_top = MMU::align_page(640 * 1024);
     // Skip VRAM and ROMs
-    si->pmm.free2_base = MMU::align_page(1024 * 1024);
+    si->pmm.free2_base = MMU::align_page((1024 * 1024) + Traits<Flash>::ADDRESS);
     si->pmm.free2_top = MMU::align_page(si->lm.app_data);
     si->pmm.free3_base = MMU::align_page(si->lm.app_data + si->lm.app_data_size);
     si->pmm.free3_top = MMU::align_page(si->pmm.mem_top);

@@ -1,0 +1,405 @@
+diff --git a/code-exec-alt-4/app/flash_tester/flash_tester.cc b/code-exec-alt-4/app/flash_tester/flash_tester.cc
+index cf3e96c..4b60083 100644
+--- a/code-exec-alt-4/app/flash_tester/flash_tester.cc
++++ b/code-exec-alt-4/app/flash_tester/flash_tester.cc
+@@ -23,13 +23,13 @@ int something()
+ 
+ int main()
+ {
+-    cout << "Producer x Consumer" << endl;
++    cout << "FLASH TESTER" << endl;
+ 
+-    Thread * something = new Thread(&something);
++    Thread * some = new Thread(&something);
+ 
+-    cout << "TESTING" << something << endl;
++    cout << "TESTING" << some << endl;
+ 
+-    delete something;
++    delete some;
+ 
+     return 0;
+ }
+diff --git a/code-exec-alt-4/app/flash_tester/flash_tester_traits.h b/code-exec-alt-4/app/flash_tester/flash_tester_traits.h
+index 27c4d23..c0e12f5 100644
+--- a/code-exec-alt-4/app/flash_tester/flash_tester_traits.h
++++ b/code-exec-alt-4/app/flash_tester/flash_tester_traits.h
+@@ -106,7 +106,7 @@ template<> struct Traits<System>: public Traits<Build>
+     static const bool multithread = (Traits<Build>::CPUS > 1) || (Traits<Application>::MAX_THREADS > 1);
+     static const bool multitask = (mode != Traits<Build>::LIBRARY);
+     static const bool multicore = (Traits<Build>::CPUS > 1) && multithread;
+-    static const bool multiheap = multitask || Traits<Scratchpad>::enabled;
++    static const bool multiheap = multitask || Traits<Scratchpad>::enabled || Traits<Flash>::enabled;
+ 
+     static const unsigned long LIFE_SPAN = 1 * YEAR; // s
+     static const unsigned int DUTY_CYCLE = 1000000; // ppm
+@@ -167,7 +167,6 @@ template<> struct Traits<ELP>: public Traits<Network>
+ {
+     typedef Ethernet NIC_Family;
+     static constexpr unsigned int NICS[] = {0}; // relative to NIC_Family (i.e. Traits<Ethernet>::DEVICES[NICS[i]]
+-    static const unsigned int UNITS = COUNTOF(NICS);
+ 
+     static const bool enabled = Traits<Network>::enabled && (NETWORKS::Count<ELP>::Result > 0);
+ };
+@@ -176,7 +175,6 @@ template<> struct Traits<TSTP>: public Traits<Network>
+ {
+     typedef Ethernet NIC_Family;
+     static constexpr unsigned int NICS[] = {0}; // relative to NIC_Family (i.e. Traits<Ethernet>::DEVICES[NICS[i]]
+-    static const unsigned int UNITS = COUNTOF(NICS);
+ 
+     static const unsigned int KEY_SIZE = 16;
+     static const unsigned int RADIO_RANGE = 8000; // approximated radio range in centimeters
+@@ -188,7 +186,6 @@ template<> struct Traits<IP>: public Traits<Network>
+ {
+     typedef Ethernet NIC_Family;
+     static constexpr unsigned int NICS[] = {0};  // relative to NIC_Family (i.e. Traits<Ethernet>::DEVICES[NICS[i]]
+-    static const unsigned int UNITS = COUNTOF(NICS);
+ 
+     struct Default_Config {
+         static const unsigned int  TYPE    = DHCP;
+diff --git a/code-exec-alt-4/app/hello/hello b/code-exec-alt-4/app/hello/hello
+deleted file mode 100755
+index e328209..0000000
+Binary files a/code-exec-alt-4/app/hello/hello and /dev/null differ
+diff --git a/code-exec-alt-4/app/hello/hello.o b/code-exec-alt-4/app/hello/hello.o
+deleted file mode 100644
+index a8d3c98..0000000
+Binary files a/code-exec-alt-4/app/hello/hello.o and /dev/null differ
+diff --git a/code-exec-alt-4/app/producer_consumer/producer_consumer_traits.h b/code-exec-alt-4/app/producer_consumer/producer_consumer_traits.h
+index c6674c3..f558fb9 100644
+--- a/code-exec-alt-4/app/producer_consumer/producer_consumer_traits.h
++++ b/code-exec-alt-4/app/producer_consumer/producer_consumer_traits.h
+@@ -31,10 +31,10 @@ template<> struct Traits<Build>: public Traits_Tokens
+ // Utilities
+ template<> struct Traits<Debug>: public Traits<Build>
+ {
+-    static const bool error   = true;
++    static const bool error   = false;
+     static const bool warning = false;
+     static const bool info    = false;
+-    static const bool trace   = true;
++    static const bool trace   = false;
+ };
+ 
+ template<> struct Traits<Lists>: public Traits<Build>
+@@ -106,7 +106,7 @@ template<> struct Traits<System>: public Traits<Build>
+     static const bool multithread = (Traits<Build>::CPUS > 1) || (Traits<Application>::MAX_THREADS > 1);
+     static const bool multitask = (mode != Traits<Build>::LIBRARY);
+     static const bool multicore = (Traits<Build>::CPUS > 1) && multithread;
+-    static const bool multiheap = true;
++    static const bool multiheap = false;
+ 
+     static const unsigned long LIFE_SPAN = 1 * YEAR; // s
+     static const unsigned int DUTY_CYCLE = 1000000; // ppm
+diff --git a/code-exec-alt-4/etc/eposmkbi.conf b/code-exec-alt-4/etc/eposmkbi.conf
+index 496a67a..8a4c6b8 100644
+--- a/code-exec-alt-4/etc/eposmkbi.conf
++++ b/code-exec-alt-4/etc/eposmkbi.conf
+@@ -11,4 +11,4 @@ MEM_TOP=0x10000000
+ BOOT_LENGTH_MIN=512
+ BOOT_LENGTH_MAX=512
+ NODE_ID=
+-UUID=ff11bd45a750412b9d3562dc4d497c54
++UUID=5990bfc071304d688f3b312f19431a9a
+diff --git a/code-exec-alt-4/img/hello b/code-exec-alt-4/img/hello
+deleted file mode 100755
+index 095cf19..0000000
+Binary files a/code-exec-alt-4/img/hello and /dev/null differ
+diff --git a/code-exec-alt-4/img/hello.img b/code-exec-alt-4/img/hello.img
+deleted file mode 100644
+index 5e07480..0000000
+Binary files a/code-exec-alt-4/img/hello.img and /dev/null differ
+diff --git a/code-exec-alt-4/img/hello.out b/code-exec-alt-4/img/hello.out
+deleted file mode 100644
+index c5a4c20..0000000
+--- a/code-exec-alt-4/img/hello.out
++++ /dev/null
+@@ -1,82 +0,0 @@
+-PC_Setup(bi=0x00107000,sp=0x00106efc)
+-PC_Setup::detect_memory()
+-PC_Setup::calibrate_timers()
+-PC_Setup::detect_pci()
+-PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:2.0] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:2.0] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:2.0] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:2.0] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:3.0] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:3.0] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:3.0] reports implausible region (starting at zero). Ignoring!
+-PCI: device [0:3.0] reports implausible region (starting at zero). Ignoring!
+-
+-Setting up this machine as follows: 
+-  Processor:    1 x IA32 at 2505 MHz (BUS clock = 125 MHz)
+-  Memory:       262144 Kbytes [0x00000000:0x10000000]
+-  User memory:  261820 Kbytes [0x00000000:0x0ffaf000]
+-  PCI aperture: 28356 Kbytes [0xfd000000:0xfebb1000]
+-  Node Id:      will get from the network!
+-  Position:     will get from the network!
+-  Setup:        21888 bytes
+-  APP code:     28672 bytes	data: 448 bytes
+-setup_idt(idt=0x0ffff000)
+-setup_gdt(gdt=0x0fffe000)
+-setup_sys_pt(pmm={idt=0x0ffff000,gdt=0x0fffe000,pt=0x0fffd000,pd=0x0fffc000,info
+-=0x0fffb000,tss0=0x0fffa000,mem=0x0ffba000,io=0x0ffb3000,sysc=0x0ffb3000,sysd=0x
+-0ffb3000,syss=0x0ffaf000,memb=0x00000000,memt=0x0ffaf000,fr1b=0x00007000,fr1t=0x
+-000a0000,fr2b=0x00100000,fr2t=0x00400000},code_size=0,data_size=0,stack_size=4)
+-setup_sys_pd(pmm={idt=0x0ffff000,...},mem_base=0x00000000,mem_top=0x0ffaf000,io_
+-base=0xfd000000,io_top=0xfebb1000)
+-setup_tss(tss0=0xff405000)
+-PC_Setup::load_app()
+-PC_Setup::call_next(ip=0x00000030,sp=0xff7c3ff8) => APPLICATION
+-Init_System()
+-CPU::init()
+-MMU::init()
+-MMU::free(frame=0x00007000,color=0,n=153)
+-MMU::free(frame=0x00100000,color=0,n=768)
+-MMU::free(frame=0x00401000,color=0,n=64430)
+-PMU::init()
+-MMU::alloc(frames=68,color=0) => 0x0005c000
+-Heap(addr=0x0005c000,bytes=278528) => 0x00400044
+-Machine::init()
+-IC::init()
+-Timer::init()
+-PCI::init(pmm.io_mem=0xfd000000)
+-Flash::init(a=720896,s=1048576)
+-MMU::alloc(frames=1,color=0) => 0x0005b000
+-Segment(bytes=1048576,phy_addr=0x000b0000,flags=0x00000010) [Chunk::_pt=0x0005b0
+-00] => 0x0009ffec
+-Address_Space(pd=0x0fffc000) [Directory::pd=0x0fffc000] => 0xff7c3f2c
+-Address_Space::attach(this=0xff7c3f2c,seg=0x0009ffec) => 0x10000000
+-Heap(addr=0x10000000,bytes=1048576) => 0x0009ffd8
+-~Address_Space(this=0xff7c3f2c) [Directory::pd=0x0fffc000]
+-Alarm::init()
+-Thread::init()
+-Thread(entry=0x00000038,state=0,priority=0,stack={b=0x0009bf98,s=16384},context=
+-{b=0x0009ff64,{eflags=0x200,eax=0,ebx=0,ecx=0,edx=0,esi=0,edi=0,ebp=0x00000000,e
+-sp=0x0009ff64,eip=0x00000038,esp3=0,cs=8,ccs=8,cds=10,ces=10,cfs=10,cgs=10,css=1
+-0,cr3=0x0fffc000}}) => 0x0009ff9c
+-Thread(entry=0x00001aca,state=1,priority=2147483646,stack={b=0x00097f6c,s=16384}
+-,context={b=0x0009bf38,{eflags=0x200,eax=0,ebx=0,ecx=0,edx=0,esi=0,edi=0,ebp=0x0
+-0000000,esp=0x0009bf38,eip=0x00001aca,esp3=0,cs=8,ccs=8,cds=10,ces=10,cfs=10,cgs
+-=10,css=10,cr3=0x0fffc000}}) => 0x0009bf70
+-Init_Application()
+-MMU::alloc(frames=84,color=0) => 0x00007000
+-MMU::alloc(frames=768,color=0) => 0x00100000
+-MMThread::yield(running=0x0009ff9c)
+-U::alloc(frames=64430,color=0) => 0x00401000
+-Init_First()
+-Hello world!
+-Thread::exit(status=0) [running=0x0009ff9c]
+-Thread::dispatch(prev=0x0009ff9c,next=0x0009bf70)
+-Thread::yield(running=0x0009bf70)
+-The last thread has exited!
+-Rebooting the machine ...
+diff --git a/code-exec-alt-4/img/setup_legacy_pc b/code-exec-alt-4/img/setup_legacy_pc
+index 3db1108..0b0641c 100755
+Binary files a/code-exec-alt-4/img/setup_legacy_pc and b/code-exec-alt-4/img/setup_legacy_pc differ
+diff --git a/code-exec-alt-4/include/system/config.h b/code-exec-alt-4/include/system/config.h
+index 7b404b5..e11a5d1 100644
+--- a/code-exec-alt-4/include/system/config.h
++++ b/code-exec-alt-4/include/system/config.h
+@@ -11,7 +11,7 @@
+ #define ARCH ia32
+ #define MACH pc
+ #define MMOD legacy_pc
+-#define APPL hello
++#define APPL producer_consumer
+ #define __mode_library__
+ #define __arch_ia32__
+ #define __mach_pc__
+diff --git a/code-exec-alt-4/makedefs b/code-exec-alt-4/makedefs
+index f456b07..fcb762b 100644
+--- a/code-exec-alt-4/makedefs
++++ b/code-exec-alt-4/makedefs
+@@ -96,7 +96,7 @@ COMP_PREFIX		= $($(ARCH)_COMP_PREFIX)
+ pc_CC_FLAGS		:= -m32 -Wa,--32
+ pc_AS_FLAGS		:= --32
+ pc_LD_FLAGS		:= -m elf_i386
+-pc_EMULATOR		= qemu-system-i386 -smp $(CPUS) -m $(MEM_SIZE)k -nographic -no-reboot -drive format=raw,index=0,if=floppy,read-only,file=
++pc_EMULATOR		= qemu-system-i386 -smp $(CPUS) -m $(MEM_SIZE)k -nographic -vga std -no-reboot -drive format=raw,index=0,if=floppy,read-only,file=
+ pc_DEBUGGER		:= gdb
+ pc_FLASHER		:=
+ pc_MAGIC		:= --nmagic
+diff --git a/code-exec-alt-4/src/api/address_space.o b/code-exec-alt-4/src/api/address_space.o
+index b77aeff..4ad9017 100644
+Binary files a/code-exec-alt-4/src/api/address_space.o and b/code-exec-alt-4/src/api/address_space.o differ
+diff --git a/code-exec-alt-4/src/api/alarm.o b/code-exec-alt-4/src/api/alarm.o
+index cda2435..589108b 100644
+Binary files a/code-exec-alt-4/src/api/alarm.o and b/code-exec-alt-4/src/api/alarm.o differ
+diff --git a/code-exec-alt-4/src/api/alarm_init.o b/code-exec-alt-4/src/api/alarm_init.o
+index 4924249..3b9b410 100644
+Binary files a/code-exec-alt-4/src/api/alarm_init.o and b/code-exec-alt-4/src/api/alarm_init.o differ
+diff --git a/code-exec-alt-4/src/api/condition.o b/code-exec-alt-4/src/api/condition.o
+index 4d362c9..de424da 100644
+Binary files a/code-exec-alt-4/src/api/condition.o and b/code-exec-alt-4/src/api/condition.o differ
+diff --git a/code-exec-alt-4/src/api/mutex.o b/code-exec-alt-4/src/api/mutex.o
+index 785ea6c..f22f7db 100644
+Binary files a/code-exec-alt-4/src/api/mutex.o and b/code-exec-alt-4/src/api/mutex.o differ
+diff --git a/code-exec-alt-4/src/api/segment.o b/code-exec-alt-4/src/api/segment.o
+index bfcec5e..86bb855 100644
+Binary files a/code-exec-alt-4/src/api/segment.o and b/code-exec-alt-4/src/api/segment.o differ
+diff --git a/code-exec-alt-4/src/api/semaphore.o b/code-exec-alt-4/src/api/semaphore.o
+index 891b0e5..d547fef 100644
+Binary files a/code-exec-alt-4/src/api/semaphore.o and b/code-exec-alt-4/src/api/semaphore.o differ
+diff --git a/code-exec-alt-4/src/api/thread.o b/code-exec-alt-4/src/api/thread.o
+index 870d18f..0d26a00 100644
+Binary files a/code-exec-alt-4/src/api/thread.o and b/code-exec-alt-4/src/api/thread.o differ
+diff --git a/code-exec-alt-4/src/api/thread_init.o b/code-exec-alt-4/src/api/thread_init.o
+index 2f67fb1..5fa9333 100644
+Binary files a/code-exec-alt-4/src/api/thread_init.o and b/code-exec-alt-4/src/api/thread_init.o differ
+diff --git a/code-exec-alt-4/src/architecture/ia32/ia32_cpu_init.o b/code-exec-alt-4/src/architecture/ia32/ia32_cpu_init.o
+index becef9d..e2af655 100644
+Binary files a/code-exec-alt-4/src/architecture/ia32/ia32_cpu_init.o and b/code-exec-alt-4/src/architecture/ia32/ia32_cpu_init.o differ
+diff --git a/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.cc b/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.cc
+index c762ecb..35c70a8 100644
+--- a/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.cc
++++ b/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.cc
+@@ -11,13 +11,30 @@ void MMU::init()
+ 
+     System_Info * si = System::info();
+ 
+-    db<Init, MMU>(INF) << "MMU::memory={base=" << reinterpret_cast<void *>(si->pmm.mem_base) << ",size="
++
++    db<Init, MMU>(TRC) << "MMU::memory={top=" << reinterpret_cast<void *>(si->pmm.mem_top) << endl;
++
++    db<Init, MMU>(TRC) << "MMU::memory={base=" << reinterpret_cast<void *>(si->pmm.mem_base) << ",size="
+                        << (si->bm.mem_top - si->bm.mem_base) / 1024 << "KB}" << endl;
+-    db<Init, MMU>(INF) << "MMU::free1={base=" << reinterpret_cast<void *>(si->pmm.free1_base) << ",size="
++
++
++
++
++    db<Init, MMU>(TRC) << "MMU::free1={top=" << reinterpret_cast<void *>(si->pmm.free1_top) << endl;
++
++    db<Init, MMU>(TRC) << "MMU::free1={base=" << reinterpret_cast<void *>(si->pmm.free1_base) << ",size="
+                        << (si->pmm.free1_top - si->pmm.free1_base) / 1024 << "KB}" << endl;
+-    db<Init, MMU>(INF) << "MMU::free2={base=" << reinterpret_cast<void *>(si->pmm.free2_base) << ",size="
++    
++
++
++    db<Init, MMU>(TRC) << "MMU::free2={top=" << reinterpret_cast<void *>(si->pmm.free2_top) << endl;
++   
++    db<Init, MMU>(TRC) << "MMU::free2={base=" << reinterpret_cast<void *>(si->pmm.free2_base) << ",size="
+                        << (si->pmm.free2_top - si->pmm.free2_base) / 1024 << "KB}" << endl;
+-    db<Init, MMU>(INF) << "MMU::free3={base=" << reinterpret_cast<void *>(si->pmm.free3_base) << ",size="
++    
++    
++    db<Init, MMU>(TRC) << "MMU::free3={top=" << reinterpret_cast<void *>(si->pmm.free3_top) << endl;
++    db<Init, MMU>(TRC) << "MMU::free3={base=" << reinterpret_cast<void *>(si->pmm.free3_base) << ",size="
+                        << (si->pmm.free3_top - si->pmm.free3_base) / 1024 << "KB}" << endl;
+ 
+     // BIG NOTE HERE: INIT (i.e. this program) will be part of the free
+@@ -88,6 +105,7 @@ void MMU::init()
+             frame += MMU::PAGE_SIZE;
+         }
+     } else {
++        db<Init, MMU>(TRC) << "NOT COLORFUL" << endl;
+         // Insert all free memory into the _free[WHITE] list
+         free(si->pmm.free1_base, pages(si->pmm.free1_top - si->pmm.free1_base));
+         free(si->pmm.free2_base, pages(si->pmm.free2_top - si->pmm.free2_base));
+diff --git a/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.o b/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.o
+index fa4dcbf..94868e9 100644
+Binary files a/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.o and b/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.o differ
+diff --git a/code-exec-alt-4/src/architecture/ia32/ia32_pmu_init.o b/code-exec-alt-4/src/architecture/ia32/ia32_pmu_init.o
+index 1a75e7d..ae1715b 100644
+Binary files a/code-exec-alt-4/src/architecture/ia32/ia32_pmu_init.o and b/code-exec-alt-4/src/architecture/ia32/ia32_pmu_init.o differ
+diff --git a/code-exec-alt-4/src/boot/boot_legacy_pc.s b/code-exec-alt-4/src/boot/boot_legacy_pc.s
+index 9d3eac3..40b81c3 100644
+--- a/code-exec-alt-4/src/boot/boot_legacy_pc.s
++++ b/code-exec-alt-4/src/boot/boot_legacy_pc.s
+@@ -2,6 +2,10 @@
+ # 1 "<built-in>"
+ # 1 "<command-line>"
+ # 1 "boot_legacy_pc.S"
++# 1 "boot_legacy_pc.S"
++# 1 "<built-in>"
++# 1 "<command-line>"
++# 1 "boot_legacy_pc.S"
+ ;==============================================================================
+ ; EPOS BOOT STRAP
+ ;
+diff --git a/code-exec-alt-4/src/init/init_application.o b/code-exec-alt-4/src/init/init_application.o
+index ff116ce..f3cd4b1 100644
+Binary files a/code-exec-alt-4/src/init/init_application.o and b/code-exec-alt-4/src/init/init_application.o differ
+diff --git a/code-exec-alt-4/src/init/init_application_legacy_pc.o b/code-exec-alt-4/src/init/init_application_legacy_pc.o
+index ff116ce..f3cd4b1 100755
+Binary files a/code-exec-alt-4/src/init/init_application_legacy_pc.o and b/code-exec-alt-4/src/init/init_application_legacy_pc.o differ
+diff --git a/code-exec-alt-4/src/init/init_first.o b/code-exec-alt-4/src/init/init_first.o
+index 9dfb2e9..a6516e8 100644
+Binary files a/code-exec-alt-4/src/init/init_first.o and b/code-exec-alt-4/src/init/init_first.o differ
+diff --git a/code-exec-alt-4/src/init/init_first_legacy_pc.o b/code-exec-alt-4/src/init/init_first_legacy_pc.o
+index 9dfb2e9..a6516e8 100755
+Binary files a/code-exec-alt-4/src/init/init_first_legacy_pc.o and b/code-exec-alt-4/src/init/init_first_legacy_pc.o differ
+diff --git a/code-exec-alt-4/src/init/init_system.o b/code-exec-alt-4/src/init/init_system.o
+index 56b2fab..5c44da4 100644
+Binary files a/code-exec-alt-4/src/init/init_system.o and b/code-exec-alt-4/src/init/init_system.o differ
+diff --git a/code-exec-alt-4/src/init/init_system_legacy_pc.o b/code-exec-alt-4/src/init/init_system_legacy_pc.o
+index 56b2fab..5c44da4 100755
+Binary files a/code-exec-alt-4/src/init/init_system_legacy_pc.o and b/code-exec-alt-4/src/init/init_system_legacy_pc.o differ
+diff --git a/code-exec-alt-4/src/machine/pc/pc_flash_init.o b/code-exec-alt-4/src/machine/pc/pc_flash_init.o
+index b63b7fe..c5993eb 100644
+Binary files a/code-exec-alt-4/src/machine/pc/pc_flash_init.o and b/code-exec-alt-4/src/machine/pc/pc_flash_init.o differ
+diff --git a/code-exec-alt-4/src/machine/pc/pc_ic_entry.o b/code-exec-alt-4/src/machine/pc/pc_ic_entry.o
+index 61d1626..e07f466 100644
+Binary files a/code-exec-alt-4/src/machine/pc/pc_ic_entry.o and b/code-exec-alt-4/src/machine/pc/pc_ic_entry.o differ
+diff --git a/code-exec-alt-4/src/machine/pc/pc_ic_init.o b/code-exec-alt-4/src/machine/pc/pc_ic_init.o
+index 1295227..f5a578b 100644
+Binary files a/code-exec-alt-4/src/machine/pc/pc_ic_init.o and b/code-exec-alt-4/src/machine/pc/pc_ic_init.o differ
+diff --git a/code-exec-alt-4/src/machine/pc/pc_keyboard.o b/code-exec-alt-4/src/machine/pc/pc_keyboard.o
+index ff8481d..31f252c 100644
+Binary files a/code-exec-alt-4/src/machine/pc/pc_keyboard.o and b/code-exec-alt-4/src/machine/pc/pc_keyboard.o differ
+diff --git a/code-exec-alt-4/src/machine/pc/pc_keyboard_init.o b/code-exec-alt-4/src/machine/pc/pc_keyboard_init.o
+index ab5eb96..194b814 100644
+Binary files a/code-exec-alt-4/src/machine/pc/pc_keyboard_init.o and b/code-exec-alt-4/src/machine/pc/pc_keyboard_init.o differ
+diff --git a/code-exec-alt-4/src/machine/pc/pc_machine_init.o b/code-exec-alt-4/src/machine/pc/pc_machine_init.o
+index cfb8d22..5fe8208 100644
+Binary files a/code-exec-alt-4/src/machine/pc/pc_machine_init.o and b/code-exec-alt-4/src/machine/pc/pc_machine_init.o differ
+diff --git a/code-exec-alt-4/src/machine/pc/pc_pci.o b/code-exec-alt-4/src/machine/pc/pc_pci.o
+index 3f3ae35..4678f65 100644
+Binary files a/code-exec-alt-4/src/machine/pc/pc_pci.o and b/code-exec-alt-4/src/machine/pc/pc_pci.o differ
+diff --git a/code-exec-alt-4/src/machine/pc/pc_pci_init.o b/code-exec-alt-4/src/machine/pc/pc_pci_init.o
+index f1fe892..f925ca5 100644
+Binary files a/code-exec-alt-4/src/machine/pc/pc_pci_init.o and b/code-exec-alt-4/src/machine/pc/pc_pci_init.o differ
+diff --git a/code-exec-alt-4/src/machine/pc/pc_rtc.o b/code-exec-alt-4/src/machine/pc/pc_rtc.o
+index b8d48a5..41da9ec 100644
+Binary files a/code-exec-alt-4/src/machine/pc/pc_rtc.o and b/code-exec-alt-4/src/machine/pc/pc_rtc.o differ
+diff --git a/code-exec-alt-4/src/machine/pc/pc_scratchpad_init.o b/code-exec-alt-4/src/machine/pc/pc_scratchpad_init.o
+index d2c2a4e..8c8dd72 100644
+Binary files a/code-exec-alt-4/src/machine/pc/pc_scratchpad_init.o and b/code-exec-alt-4/src/machine/pc/pc_scratchpad_init.o differ
+diff --git a/code-exec-alt-4/src/machine/pc/pc_timer_init.o b/code-exec-alt-4/src/machine/pc/pc_timer_init.o
+index 71ffdcf..9a0b32f 100644
+Binary files a/code-exec-alt-4/src/machine/pc/pc_timer_init.o and b/code-exec-alt-4/src/machine/pc/pc_timer_init.o differ
+diff --git a/code-exec-alt-4/src/setup/setup_legacy_pc b/code-exec-alt-4/src/setup/setup_legacy_pc
+index 3db1108..0b0641c 100755
+Binary files a/code-exec-alt-4/src/setup/setup_legacy_pc and b/code-exec-alt-4/src/setup/setup_legacy_pc differ
+diff --git a/code-exec-alt-4/src/setup/setup_legacy_pc.cc b/code-exec-alt-4/src/setup/setup_legacy_pc.cc
+index 6be51b0..d945537 100644
+--- a/code-exec-alt-4/src/setup/setup_legacy_pc.cc
++++ b/code-exec-alt-4/src/setup/setup_legacy_pc.cc
+@@ -478,7 +478,7 @@ void PC_Setup::build_pmm()
+     si->pmm.free1_base = MMU::align_page(si->lm.app_code + si->lm.app_code_size);
+     si->pmm.free1_top = MMU::align_page(640 * 1024);
+     // Skip VRAM and ROMs
+-    si->pmm.free2_base = MMU::align_page(1024 * 1024);
++    si->pmm.free2_base = MMU::align_page((1024 * 1024) + Traits<Flash>::ADDRESS);
+     si->pmm.free2_top = MMU::align_page(si->lm.app_data);
+     si->pmm.free3_base = MMU::align_page(si->lm.app_data + si->lm.app_data_size);
+     si->pmm.free3_top = MMU::align_page(si->pmm.mem_top);
+diff --git a/code-exec-alt-4/src/setup/setup_legacy_pc.o b/code-exec-alt-4/src/setup/setup_legacy_pc.o
+index e71b73f..26ad5a2 100644
+Binary files a/code-exec-alt-4/src/setup/setup_legacy_pc.o and b/code-exec-alt-4/src/setup/setup_legacy_pc.o differ
+diff --git a/code-exec-alt-4/src/system/system_binding.o b/code-exec-alt-4/src/system/system_binding.o
+index d2553f7..9645ee9 100644
+Binary files a/code-exec-alt-4/src/system/system_binding.o and b/code-exec-alt-4/src/system/system_binding.o differ
+diff --git a/code-exec-alt-4/src/system/system_legacy_pc.o b/code-exec-alt-4/src/system/system_legacy_pc.o
+index 08fbc24..14debcb 100644
+Binary files a/code-exec-alt-4/src/system/system_legacy_pc.o and b/code-exec-alt-4/src/system/system_legacy_pc.o differ
+diff --git a/code-exec-alt-4/src/system/system_scaffold.o b/code-exec-alt-4/src/system/system_scaffold.o
+index 00d418d..f78bc4d 100644
+Binary files a/code-exec-alt-4/src/system/system_scaffold.o and b/code-exec-alt-4/src/system/system_scaffold.o differ

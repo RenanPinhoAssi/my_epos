@@ -106,7 +106,7 @@ template<> struct Traits<System>: public Traits<Build>
     static const bool multithread = (Traits<Build>::CPUS > 1) || (Traits<Application>::MAX_THREADS > 1);
     static const bool multitask = (mode != Traits<Build>::LIBRARY);
     static const bool multicore = (Traits<Build>::CPUS > 1) && multithread;
-    static const bool multiheap = multitask || Traits<Scratchpad>::enabled;
+    static const bool multiheap = multitask || Traits<Scratchpad>::enabled || Traits<Flash>::enabled;
 
     static const unsigned long LIFE_SPAN = 1 * YEAR; // s
     static const unsigned int DUTY_CYCLE = 1000000; // ppm
@@ -167,7 +167,6 @@ template<> struct Traits<ELP>: public Traits<Network>
 {
     typedef Ethernet NIC_Family;
     static constexpr unsigned int NICS[] = {0}; // relative to NIC_Family (i.e. Traits<Ethernet>::DEVICES[NICS[i]]
-    static const unsigned int UNITS = COUNTOF(NICS);
 
     static const bool enabled = Traits<Network>::enabled && (NETWORKS::Count<ELP>::Result > 0);
 };
@@ -176,7 +175,6 @@ template<> struct Traits<TSTP>: public Traits<Network>
 {
     typedef Ethernet NIC_Family;
     static constexpr unsigned int NICS[] = {0}; // relative to NIC_Family (i.e. Traits<Ethernet>::DEVICES[NICS[i]]
-    static const unsigned int UNITS = COUNTOF(NICS);
 
     static const unsigned int KEY_SIZE = 16;
     static const unsigned int RADIO_RANGE = 8000; // approximated radio range in centimeters
@@ -188,7 +186,6 @@ template<> struct Traits<IP>: public Traits<Network>
 {
     typedef Ethernet NIC_Family;
     static constexpr unsigned int NICS[] = {0};  // relative to NIC_Family (i.e. Traits<Ethernet>::DEVICES[NICS[i]]
-    static const unsigned int UNITS = COUNTOF(NICS);
 
     struct Default_Config {
         static const unsigned int  TYPE    = DHCP;

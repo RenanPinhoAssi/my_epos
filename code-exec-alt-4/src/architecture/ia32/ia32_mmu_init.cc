@@ -11,13 +11,30 @@ void MMU::init()
 
     System_Info * si = System::info();
 
-    db<Init, MMU>(INF) << "MMU::memory={base=" << reinterpret_cast<void *>(si->pmm.mem_base) << ",size="
+
+    db<Init, MMU>(TRC) << "MMU::memory={top=" << reinterpret_cast<void *>(si->pmm.mem_top) << endl;
+
+    db<Init, MMU>(TRC) << "MMU::memory={base=" << reinterpret_cast<void *>(si->pmm.mem_base) << ",size="
                        << (si->bm.mem_top - si->bm.mem_base) / 1024 << "KB}" << endl;
-    db<Init, MMU>(INF) << "MMU::free1={base=" << reinterpret_cast<void *>(si->pmm.free1_base) << ",size="
+
+
+
+
+    db<Init, MMU>(TRC) << "MMU::free1={top=" << reinterpret_cast<void *>(si->pmm.free1_top) << endl;
+
+    db<Init, MMU>(TRC) << "MMU::free1={base=" << reinterpret_cast<void *>(si->pmm.free1_base) << ",size="
                        << (si->pmm.free1_top - si->pmm.free1_base) / 1024 << "KB}" << endl;
-    db<Init, MMU>(INF) << "MMU::free2={base=" << reinterpret_cast<void *>(si->pmm.free2_base) << ",size="
+    
+
+
+    db<Init, MMU>(TRC) << "MMU::free2={top=" << reinterpret_cast<void *>(si->pmm.free2_top) << endl;
+   
+    db<Init, MMU>(TRC) << "MMU::free2={base=" << reinterpret_cast<void *>(si->pmm.free2_base) << ",size="
                        << (si->pmm.free2_top - si->pmm.free2_base) / 1024 << "KB}" << endl;
-    db<Init, MMU>(INF) << "MMU::free3={base=" << reinterpret_cast<void *>(si->pmm.free3_base) << ",size="
+    
+    
+    db<Init, MMU>(TRC) << "MMU::free3={top=" << reinterpret_cast<void *>(si->pmm.free3_top) << endl;
+    db<Init, MMU>(TRC) << "MMU::free3={base=" << reinterpret_cast<void *>(si->pmm.free3_base) << ",size="
                        << (si->pmm.free3_top - si->pmm.free3_base) / 1024 << "KB}" << endl;
 
     // BIG NOTE HERE: INIT (i.e. this program) will be part of the free
@@ -88,6 +105,7 @@ void MMU::init()
             frame += MMU::PAGE_SIZE;
         }
     } else {
+        db<Init, MMU>(TRC) << "NOT COLORFUL" << endl;
         // Insert all free memory into the _free[WHITE] list
         free(si->pmm.free1_base, pages(si->pmm.free1_top - si->pmm.free1_base));
         free(si->pmm.free2_base, pages(si->pmm.free2_top - si->pmm.free2_base));
