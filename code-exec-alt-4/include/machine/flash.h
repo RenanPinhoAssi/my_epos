@@ -19,11 +19,11 @@ protected:
     Flash_Base() {}
 
 public:
-    static void * alloc(unsigned int bytes) { return _heap->alloc(bytes); }
+    static void *alloc(unsigned int bytes) { return _heap->alloc(bytes); }
 
 protected:
-    static Segment * _segment;
-    static Heap * _heap;
+    static Segment *_segment;
+    static Heap *_heap;
 };
 
 __END_SYS
@@ -33,13 +33,14 @@ __END_SYS
 #if defined(__FLASH_H) && !defined(__flash_common_only__)
 #include __FLASH_H
 
-inline void * operator new(size_t bytes, const EPOS::Flash_Allocator & allocator) {
+inline void *operator new(size_t bytes, const EPOS::Flash_Allocator &allocator)
+{
     return _SYS::Flash::_heap->alloc(bytes);
 }
 
-inline void * operator new[](size_t bytes, const EPOS::Flash_Allocator & allocator) {
+inline void *operator new[](size_t bytes, const EPOS::Flash_Allocator &allocator)
+{
     return _SYS::Flash::_heap->alloc(bytes);
 }
 
 #endif
-
