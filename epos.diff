@@ -1,410 +1,1088 @@
-diff --git a/epos.diff b/epos.diff
-index 2db9926..e69de29 100644
---- a/epos.diff
-+++ b/epos.diff
-@@ -1,405 +0,0 @@
--diff --git a/code-exec-alt-4/app/flash_tester/flash_tester.cc b/code-exec-alt-4/app/flash_tester/flash_tester.cc
--index cf3e96c..4b60083 100644
----- a/code-exec-alt-4/app/flash_tester/flash_tester.cc
--+++ b/code-exec-alt-4/app/flash_tester/flash_tester.cc
--@@ -23,13 +23,13 @@ int something()
-- 
-- int main()
-- {
---    cout << "Producer x Consumer" << endl;
--+    cout << "FLASH TESTER" << endl;
-- 
---    Thread * something = new Thread(&something);
--+    Thread * some = new Thread(&something);
-- 
---    cout << "TESTING" << something << endl;
--+    cout << "TESTING" << some << endl;
-- 
---    delete something;
--+    delete some;
-- 
--     return 0;
-- }
--diff --git a/code-exec-alt-4/app/flash_tester/flash_tester_traits.h b/code-exec-alt-4/app/flash_tester/flash_tester_traits.h
--index 27c4d23..c0e12f5 100644
----- a/code-exec-alt-4/app/flash_tester/flash_tester_traits.h
--+++ b/code-exec-alt-4/app/flash_tester/flash_tester_traits.h
--@@ -106,7 +106,7 @@ template<> struct Traits<System>: public Traits<Build>
--     static const bool multithread = (Traits<Build>::CPUS > 1) || (Traits<Application>::MAX_THREADS > 1);
--     static const bool multitask = (mode != Traits<Build>::LIBRARY);
--     static const bool multicore = (Traits<Build>::CPUS > 1) && multithread;
---    static const bool multiheap = multitask || Traits<Scratchpad>::enabled;
--+    static const bool multiheap = multitask || Traits<Scratchpad>::enabled || Traits<Flash>::enabled;
-- 
--     static const unsigned long LIFE_SPAN = 1 * YEAR; // s
--     static const unsigned int DUTY_CYCLE = 1000000; // ppm
--@@ -167,7 +167,6 @@ template<> struct Traits<ELP>: public Traits<Network>
-- {
--     typedef Ethernet NIC_Family;
--     static constexpr unsigned int NICS[] = {0}; // relative to NIC_Family (i.e. Traits<Ethernet>::DEVICES[NICS[i]]
---    static const unsigned int UNITS = COUNTOF(NICS);
-- 
--     static const bool enabled = Traits<Network>::enabled && (NETWORKS::Count<ELP>::Result > 0);
-- };
--@@ -176,7 +175,6 @@ template<> struct Traits<TSTP>: public Traits<Network>
-- {
--     typedef Ethernet NIC_Family;
--     static constexpr unsigned int NICS[] = {0}; // relative to NIC_Family (i.e. Traits<Ethernet>::DEVICES[NICS[i]]
---    static const unsigned int UNITS = COUNTOF(NICS);
-- 
--     static const unsigned int KEY_SIZE = 16;
--     static const unsigned int RADIO_RANGE = 8000; // approximated radio range in centimeters
--@@ -188,7 +186,6 @@ template<> struct Traits<IP>: public Traits<Network>
-- {
--     typedef Ethernet NIC_Family;
--     static constexpr unsigned int NICS[] = {0};  // relative to NIC_Family (i.e. Traits<Ethernet>::DEVICES[NICS[i]]
---    static const unsigned int UNITS = COUNTOF(NICS);
-- 
--     struct Default_Config {
--         static const unsigned int  TYPE    = DHCP;
--diff --git a/code-exec-alt-4/app/hello/hello b/code-exec-alt-4/app/hello/hello
--deleted file mode 100755
--index e328209..0000000
--Binary files a/code-exec-alt-4/app/hello/hello and /dev/null differ
--diff --git a/code-exec-alt-4/app/hello/hello.o b/code-exec-alt-4/app/hello/hello.o
--deleted file mode 100644
--index a8d3c98..0000000
--Binary files a/code-exec-alt-4/app/hello/hello.o and /dev/null differ
--diff --git a/code-exec-alt-4/app/producer_consumer/producer_consumer_traits.h b/code-exec-alt-4/app/producer_consumer/producer_consumer_traits.h
--index c6674c3..f558fb9 100644
----- a/code-exec-alt-4/app/producer_consumer/producer_consumer_traits.h
--+++ b/code-exec-alt-4/app/producer_consumer/producer_consumer_traits.h
--@@ -31,10 +31,10 @@ template<> struct Traits<Build>: public Traits_Tokens
-- // Utilities
-- template<> struct Traits<Debug>: public Traits<Build>
-- {
---    static const bool error   = true;
--+    static const bool error   = false;
--     static const bool warning = false;
--     static const bool info    = false;
---    static const bool trace   = true;
--+    static const bool trace   = false;
-- };
-- 
-- template<> struct Traits<Lists>: public Traits<Build>
--@@ -106,7 +106,7 @@ template<> struct Traits<System>: public Traits<Build>
--     static const bool multithread = (Traits<Build>::CPUS > 1) || (Traits<Application>::MAX_THREADS > 1);
--     static const bool multitask = (mode != Traits<Build>::LIBRARY);
--     static const bool multicore = (Traits<Build>::CPUS > 1) && multithread;
---    static const bool multiheap = true;
--+    static const bool multiheap = false;
-- 
--     static const unsigned long LIFE_SPAN = 1 * YEAR; // s
--     static const unsigned int DUTY_CYCLE = 1000000; // ppm
--diff --git a/code-exec-alt-4/etc/eposmkbi.conf b/code-exec-alt-4/etc/eposmkbi.conf
--index 496a67a..8a4c6b8 100644
----- a/code-exec-alt-4/etc/eposmkbi.conf
--+++ b/code-exec-alt-4/etc/eposmkbi.conf
--@@ -11,4 +11,4 @@ MEM_TOP=0x10000000
-- BOOT_LENGTH_MIN=512
-- BOOT_LENGTH_MAX=512
-- NODE_ID=
---UUID=ff11bd45a750412b9d3562dc4d497c54
--+UUID=5990bfc071304d688f3b312f19431a9a
--diff --git a/code-exec-alt-4/img/hello b/code-exec-alt-4/img/hello
--deleted file mode 100755
--index 095cf19..0000000
--Binary files a/code-exec-alt-4/img/hello and /dev/null differ
--diff --git a/code-exec-alt-4/img/hello.img b/code-exec-alt-4/img/hello.img
--deleted file mode 100644
--index 5e07480..0000000
--Binary files a/code-exec-alt-4/img/hello.img and /dev/null differ
--diff --git a/code-exec-alt-4/img/hello.out b/code-exec-alt-4/img/hello.out
--deleted file mode 100644
--index c5a4c20..0000000
----- a/code-exec-alt-4/img/hello.out
--+++ /dev/null
--@@ -1,82 +0,0 @@
---PC_Setup(bi=0x00107000,sp=0x00106efc)
---PC_Setup::detect_memory()
---PC_Setup::calibrate_timers()
---PC_Setup::detect_pci()
---PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:1.3] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:2.0] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:2.0] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:2.0] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:2.0] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:3.0] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:3.0] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:3.0] reports implausible region (starting at zero). Ignoring!
---PCI: device [0:3.0] reports implausible region (starting at zero). Ignoring!
---
---Setting up this machine as follows: 
---  Processor:    1 x IA32 at 2505 MHz (BUS clock = 125 MHz)
---  Memory:       262144 Kbytes [0x00000000:0x10000000]
---  User memory:  261820 Kbytes [0x00000000:0x0ffaf000]
---  PCI aperture: 28356 Kbytes [0xfd000000:0xfebb1000]
---  Node Id:      will get from the network!
---  Position:     will get from the network!
---  Setup:        21888 bytes
---  APP code:     28672 bytes	data: 448 bytes
---setup_idt(idt=0x0ffff000)
---setup_gdt(gdt=0x0fffe000)
---setup_sys_pt(pmm={idt=0x0ffff000,gdt=0x0fffe000,pt=0x0fffd000,pd=0x0fffc000,info
---=0x0fffb000,tss0=0x0fffa000,mem=0x0ffba000,io=0x0ffb3000,sysc=0x0ffb3000,sysd=0x
---0ffb3000,syss=0x0ffaf000,memb=0x00000000,memt=0x0ffaf000,fr1b=0x00007000,fr1t=0x
---000a0000,fr2b=0x00100000,fr2t=0x00400000},code_size=0,data_size=0,stack_size=4)
---setup_sys_pd(pmm={idt=0x0ffff000,...},mem_base=0x00000000,mem_top=0x0ffaf000,io_
---base=0xfd000000,io_top=0xfebb1000)
---setup_tss(tss0=0xff405000)
---PC_Setup::load_app()
---PC_Setup::call_next(ip=0x00000030,sp=0xff7c3ff8) => APPLICATION
---Init_System()
---CPU::init()
---MMU::init()
---MMU::free(frame=0x00007000,color=0,n=153)
---MMU::free(frame=0x00100000,color=0,n=768)
---MMU::free(frame=0x00401000,color=0,n=64430)
---PMU::init()
---MMU::alloc(frames=68,color=0) => 0x0005c000
---Heap(addr=0x0005c000,bytes=278528) => 0x00400044
---Machine::init()
---IC::init()
---Timer::init()
---PCI::init(pmm.io_mem=0xfd000000)
---Flash::init(a=720896,s=1048576)
---MMU::alloc(frames=1,color=0) => 0x0005b000
---Segment(bytes=1048576,phy_addr=0x000b0000,flags=0x00000010) [Chunk::_pt=0x0005b0
---00] => 0x0009ffec
---Address_Space(pd=0x0fffc000) [Directory::pd=0x0fffc000] => 0xff7c3f2c
---Address_Space::attach(this=0xff7c3f2c,seg=0x0009ffec) => 0x10000000
---Heap(addr=0x10000000,bytes=1048576) => 0x0009ffd8
---~Address_Space(this=0xff7c3f2c) [Directory::pd=0x0fffc000]
---Alarm::init()
---Thread::init()
---Thread(entry=0x00000038,state=0,priority=0,stack={b=0x0009bf98,s=16384},context=
---{b=0x0009ff64,{eflags=0x200,eax=0,ebx=0,ecx=0,edx=0,esi=0,edi=0,ebp=0x00000000,e
---sp=0x0009ff64,eip=0x00000038,esp3=0,cs=8,ccs=8,cds=10,ces=10,cfs=10,cgs=10,css=1
---0,cr3=0x0fffc000}}) => 0x0009ff9c
---Thread(entry=0x00001aca,state=1,priority=2147483646,stack={b=0x00097f6c,s=16384}
---,context={b=0x0009bf38,{eflags=0x200,eax=0,ebx=0,ecx=0,edx=0,esi=0,edi=0,ebp=0x0
---0000000,esp=0x0009bf38,eip=0x00001aca,esp3=0,cs=8,ccs=8,cds=10,ces=10,cfs=10,cgs
---=10,css=10,cr3=0x0fffc000}}) => 0x0009bf70
---Init_Application()
---MMU::alloc(frames=84,color=0) => 0x00007000
---MMU::alloc(frames=768,color=0) => 0x00100000
---MMThread::yield(running=0x0009ff9c)
---U::alloc(frames=64430,color=0) => 0x00401000
---Init_First()
---Hello world!
---Thread::exit(status=0) [running=0x0009ff9c]
---Thread::dispatch(prev=0x0009ff9c,next=0x0009bf70)
---Thread::yield(running=0x0009bf70)
---The last thread has exited!
---Rebooting the machine ...
--diff --git a/code-exec-alt-4/img/setup_legacy_pc b/code-exec-alt-4/img/setup_legacy_pc
--index 3db1108..0b0641c 100755
--Binary files a/code-exec-alt-4/img/setup_legacy_pc and b/code-exec-alt-4/img/setup_legacy_pc differ
--diff --git a/code-exec-alt-4/include/system/config.h b/code-exec-alt-4/include/system/config.h
--index 7b404b5..e11a5d1 100644
----- a/code-exec-alt-4/include/system/config.h
--+++ b/code-exec-alt-4/include/system/config.h
--@@ -11,7 +11,7 @@
-- #define ARCH ia32
-- #define MACH pc
-- #define MMOD legacy_pc
---#define APPL hello
--+#define APPL producer_consumer
-- #define __mode_library__
-- #define __arch_ia32__
-- #define __mach_pc__
--diff --git a/code-exec-alt-4/makedefs b/code-exec-alt-4/makedefs
--index f456b07..fcb762b 100644
----- a/code-exec-alt-4/makedefs
--+++ b/code-exec-alt-4/makedefs
--@@ -96,7 +96,7 @@ COMP_PREFIX		= $($(ARCH)_COMP_PREFIX)
-- pc_CC_FLAGS		:= -m32 -Wa,--32
-- pc_AS_FLAGS		:= --32
-- pc_LD_FLAGS		:= -m elf_i386
---pc_EMULATOR		= qemu-system-i386 -smp $(CPUS) -m $(MEM_SIZE)k -nographic -no-reboot -drive format=raw,index=0,if=floppy,read-only,file=
--+pc_EMULATOR		= qemu-system-i386 -smp $(CPUS) -m $(MEM_SIZE)k -nographic -vga std -no-reboot -drive format=raw,index=0,if=floppy,read-only,file=
-- pc_DEBUGGER		:= gdb
-- pc_FLASHER		:=
-- pc_MAGIC		:= --nmagic
--diff --git a/code-exec-alt-4/src/api/address_space.o b/code-exec-alt-4/src/api/address_space.o
--index b77aeff..4ad9017 100644
--Binary files a/code-exec-alt-4/src/api/address_space.o and b/code-exec-alt-4/src/api/address_space.o differ
--diff --git a/code-exec-alt-4/src/api/alarm.o b/code-exec-alt-4/src/api/alarm.o
--index cda2435..589108b 100644
--Binary files a/code-exec-alt-4/src/api/alarm.o and b/code-exec-alt-4/src/api/alarm.o differ
--diff --git a/code-exec-alt-4/src/api/alarm_init.o b/code-exec-alt-4/src/api/alarm_init.o
--index 4924249..3b9b410 100644
--Binary files a/code-exec-alt-4/src/api/alarm_init.o and b/code-exec-alt-4/src/api/alarm_init.o differ
--diff --git a/code-exec-alt-4/src/api/condition.o b/code-exec-alt-4/src/api/condition.o
--index 4d362c9..de424da 100644
--Binary files a/code-exec-alt-4/src/api/condition.o and b/code-exec-alt-4/src/api/condition.o differ
--diff --git a/code-exec-alt-4/src/api/mutex.o b/code-exec-alt-4/src/api/mutex.o
--index 785ea6c..f22f7db 100644
--Binary files a/code-exec-alt-4/src/api/mutex.o and b/code-exec-alt-4/src/api/mutex.o differ
--diff --git a/code-exec-alt-4/src/api/segment.o b/code-exec-alt-4/src/api/segment.o
--index bfcec5e..86bb855 100644
--Binary files a/code-exec-alt-4/src/api/segment.o and b/code-exec-alt-4/src/api/segment.o differ
--diff --git a/code-exec-alt-4/src/api/semaphore.o b/code-exec-alt-4/src/api/semaphore.o
--index 891b0e5..d547fef 100644
--Binary files a/code-exec-alt-4/src/api/semaphore.o and b/code-exec-alt-4/src/api/semaphore.o differ
--diff --git a/code-exec-alt-4/src/api/thread.o b/code-exec-alt-4/src/api/thread.o
--index 870d18f..0d26a00 100644
--Binary files a/code-exec-alt-4/src/api/thread.o and b/code-exec-alt-4/src/api/thread.o differ
--diff --git a/code-exec-alt-4/src/api/thread_init.o b/code-exec-alt-4/src/api/thread_init.o
--index 2f67fb1..5fa9333 100644
--Binary files a/code-exec-alt-4/src/api/thread_init.o and b/code-exec-alt-4/src/api/thread_init.o differ
--diff --git a/code-exec-alt-4/src/architecture/ia32/ia32_cpu_init.o b/code-exec-alt-4/src/architecture/ia32/ia32_cpu_init.o
--index becef9d..e2af655 100644
--Binary files a/code-exec-alt-4/src/architecture/ia32/ia32_cpu_init.o and b/code-exec-alt-4/src/architecture/ia32/ia32_cpu_init.o differ
--diff --git a/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.cc b/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.cc
--index c762ecb..35c70a8 100644
----- a/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.cc
--+++ b/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.cc
--@@ -11,13 +11,30 @@ void MMU::init()
-- 
--     System_Info * si = System::info();
-- 
---    db<Init, MMU>(INF) << "MMU::memory={base=" << reinterpret_cast<void *>(si->pmm.mem_base) << ",size="
--+
--+    db<Init, MMU>(TRC) << "MMU::memory={top=" << reinterpret_cast<void *>(si->pmm.mem_top) << endl;
--+
--+    db<Init, MMU>(TRC) << "MMU::memory={base=" << reinterpret_cast<void *>(si->pmm.mem_base) << ",size="
--                        << (si->bm.mem_top - si->bm.mem_base) / 1024 << "KB}" << endl;
---    db<Init, MMU>(INF) << "MMU::free1={base=" << reinterpret_cast<void *>(si->pmm.free1_base) << ",size="
--+
--+
--+
--+
--+    db<Init, MMU>(TRC) << "MMU::free1={top=" << reinterpret_cast<void *>(si->pmm.free1_top) << endl;
--+
--+    db<Init, MMU>(TRC) << "MMU::free1={base=" << reinterpret_cast<void *>(si->pmm.free1_base) << ",size="
--                        << (si->pmm.free1_top - si->pmm.free1_base) / 1024 << "KB}" << endl;
---    db<Init, MMU>(INF) << "MMU::free2={base=" << reinterpret_cast<void *>(si->pmm.free2_base) << ",size="
--+    
--+
--+
--+    db<Init, MMU>(TRC) << "MMU::free2={top=" << reinterpret_cast<void *>(si->pmm.free2_top) << endl;
--+   
--+    db<Init, MMU>(TRC) << "MMU::free2={base=" << reinterpret_cast<void *>(si->pmm.free2_base) << ",size="
--                        << (si->pmm.free2_top - si->pmm.free2_base) / 1024 << "KB}" << endl;
---    db<Init, MMU>(INF) << "MMU::free3={base=" << reinterpret_cast<void *>(si->pmm.free3_base) << ",size="
--+    
--+    
--+    db<Init, MMU>(TRC) << "MMU::free3={top=" << reinterpret_cast<void *>(si->pmm.free3_top) << endl;
--+    db<Init, MMU>(TRC) << "MMU::free3={base=" << reinterpret_cast<void *>(si->pmm.free3_base) << ",size="
--                        << (si->pmm.free3_top - si->pmm.free3_base) / 1024 << "KB}" << endl;
-- 
--     // BIG NOTE HERE: INIT (i.e. this program) will be part of the free
--@@ -88,6 +105,7 @@ void MMU::init()
--             frame += MMU::PAGE_SIZE;
--         }
--     } else {
--+        db<Init, MMU>(TRC) << "NOT COLORFUL" << endl;
--         // Insert all free memory into the _free[WHITE] list
--         free(si->pmm.free1_base, pages(si->pmm.free1_top - si->pmm.free1_base));
--         free(si->pmm.free2_base, pages(si->pmm.free2_top - si->pmm.free2_base));
--diff --git a/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.o b/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.o
--index fa4dcbf..94868e9 100644
--Binary files a/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.o and b/code-exec-alt-4/src/architecture/ia32/ia32_mmu_init.o differ
--diff --git a/code-exec-alt-4/src/architecture/ia32/ia32_pmu_init.o b/code-exec-alt-4/src/architecture/ia32/ia32_pmu_init.o
--index 1a75e7d..ae1715b 100644
--Binary files a/code-exec-alt-4/src/architecture/ia32/ia32_pmu_init.o and b/code-exec-alt-4/src/architecture/ia32/ia32_pmu_init.o differ
--diff --git a/code-exec-alt-4/src/boot/boot_legacy_pc.s b/code-exec-alt-4/src/boot/boot_legacy_pc.s
--index 9d3eac3..40b81c3 100644
----- a/code-exec-alt-4/src/boot/boot_legacy_pc.s
--+++ b/code-exec-alt-4/src/boot/boot_legacy_pc.s
--@@ -2,6 +2,10 @@
-- # 1 "<built-in>"
-- # 1 "<command-line>"
-- # 1 "boot_legacy_pc.S"
--+# 1 "boot_legacy_pc.S"
--+# 1 "<built-in>"
--+# 1 "<command-line>"
--+# 1 "boot_legacy_pc.S"
-- ;==============================================================================
-- ; EPOS BOOT STRAP
-- ;
--diff --git a/code-exec-alt-4/src/init/init_application.o b/code-exec-alt-4/src/init/init_application.o
--index ff116ce..f3cd4b1 100644
--Binary files a/code-exec-alt-4/src/init/init_application.o and b/code-exec-alt-4/src/init/init_application.o differ
--diff --git a/code-exec-alt-4/src/init/init_application_legacy_pc.o b/code-exec-alt-4/src/init/init_application_legacy_pc.o
--index ff116ce..f3cd4b1 100755
--Binary files a/code-exec-alt-4/src/init/init_application_legacy_pc.o and b/code-exec-alt-4/src/init/init_application_legacy_pc.o differ
--diff --git a/code-exec-alt-4/src/init/init_first.o b/code-exec-alt-4/src/init/init_first.o
--index 9dfb2e9..a6516e8 100644
--Binary files a/code-exec-alt-4/src/init/init_first.o and b/code-exec-alt-4/src/init/init_first.o differ
--diff --git a/code-exec-alt-4/src/init/init_first_legacy_pc.o b/code-exec-alt-4/src/init/init_first_legacy_pc.o
--index 9dfb2e9..a6516e8 100755
--Binary files a/code-exec-alt-4/src/init/init_first_legacy_pc.o and b/code-exec-alt-4/src/init/init_first_legacy_pc.o differ
--diff --git a/code-exec-alt-4/src/init/init_system.o b/code-exec-alt-4/src/init/init_system.o
--index 56b2fab..5c44da4 100644
--Binary files a/code-exec-alt-4/src/init/init_system.o and b/code-exec-alt-4/src/init/init_system.o differ
--diff --git a/code-exec-alt-4/src/init/init_system_legacy_pc.o b/code-exec-alt-4/src/init/init_system_legacy_pc.o
--index 56b2fab..5c44da4 100755
--Binary files a/code-exec-alt-4/src/init/init_system_legacy_pc.o and b/code-exec-alt-4/src/init/init_system_legacy_pc.o differ
--diff --git a/code-exec-alt-4/src/machine/pc/pc_flash_init.o b/code-exec-alt-4/src/machine/pc/pc_flash_init.o
--index b63b7fe..c5993eb 100644
--Binary files a/code-exec-alt-4/src/machine/pc/pc_flash_init.o and b/code-exec-alt-4/src/machine/pc/pc_flash_init.o differ
--diff --git a/code-exec-alt-4/src/machine/pc/pc_ic_entry.o b/code-exec-alt-4/src/machine/pc/pc_ic_entry.o
--index 61d1626..e07f466 100644
--Binary files a/code-exec-alt-4/src/machine/pc/pc_ic_entry.o and b/code-exec-alt-4/src/machine/pc/pc_ic_entry.o differ
--diff --git a/code-exec-alt-4/src/machine/pc/pc_ic_init.o b/code-exec-alt-4/src/machine/pc/pc_ic_init.o
--index 1295227..f5a578b 100644
--Binary files a/code-exec-alt-4/src/machine/pc/pc_ic_init.o and b/code-exec-alt-4/src/machine/pc/pc_ic_init.o differ
--diff --git a/code-exec-alt-4/src/machine/pc/pc_keyboard.o b/code-exec-alt-4/src/machine/pc/pc_keyboard.o
--index ff8481d..31f252c 100644
--Binary files a/code-exec-alt-4/src/machine/pc/pc_keyboard.o and b/code-exec-alt-4/src/machine/pc/pc_keyboard.o differ
--diff --git a/code-exec-alt-4/src/machine/pc/pc_keyboard_init.o b/code-exec-alt-4/src/machine/pc/pc_keyboard_init.o
--index ab5eb96..194b814 100644
--Binary files a/code-exec-alt-4/src/machine/pc/pc_keyboard_init.o and b/code-exec-alt-4/src/machine/pc/pc_keyboard_init.o differ
--diff --git a/code-exec-alt-4/src/machine/pc/pc_machine_init.o b/code-exec-alt-4/src/machine/pc/pc_machine_init.o
--index cfb8d22..5fe8208 100644
--Binary files a/code-exec-alt-4/src/machine/pc/pc_machine_init.o and b/code-exec-alt-4/src/machine/pc/pc_machine_init.o differ
--diff --git a/code-exec-alt-4/src/machine/pc/pc_pci.o b/code-exec-alt-4/src/machine/pc/pc_pci.o
--index 3f3ae35..4678f65 100644
--Binary files a/code-exec-alt-4/src/machine/pc/pc_pci.o and b/code-exec-alt-4/src/machine/pc/pc_pci.o differ
--diff --git a/code-exec-alt-4/src/machine/pc/pc_pci_init.o b/code-exec-alt-4/src/machine/pc/pc_pci_init.o
--index f1fe892..f925ca5 100644
--Binary files a/code-exec-alt-4/src/machine/pc/pc_pci_init.o and b/code-exec-alt-4/src/machine/pc/pc_pci_init.o differ
--diff --git a/code-exec-alt-4/src/machine/pc/pc_rtc.o b/code-exec-alt-4/src/machine/pc/pc_rtc.o
--index b8d48a5..41da9ec 100644
--Binary files a/code-exec-alt-4/src/machine/pc/pc_rtc.o and b/code-exec-alt-4/src/machine/pc/pc_rtc.o differ
--diff --git a/code-exec-alt-4/src/machine/pc/pc_scratchpad_init.o b/code-exec-alt-4/src/machine/pc/pc_scratchpad_init.o
--index d2c2a4e..8c8dd72 100644
--Binary files a/code-exec-alt-4/src/machine/pc/pc_scratchpad_init.o and b/code-exec-alt-4/src/machine/pc/pc_scratchpad_init.o differ
--diff --git a/code-exec-alt-4/src/machine/pc/pc_timer_init.o b/code-exec-alt-4/src/machine/pc/pc_timer_init.o
--index 71ffdcf..9a0b32f 100644
--Binary files a/code-exec-alt-4/src/machine/pc/pc_timer_init.o and b/code-exec-alt-4/src/machine/pc/pc_timer_init.o differ
--diff --git a/code-exec-alt-4/src/setup/setup_legacy_pc b/code-exec-alt-4/src/setup/setup_legacy_pc
--index 3db1108..0b0641c 100755
--Binary files a/code-exec-alt-4/src/setup/setup_legacy_pc and b/code-exec-alt-4/src/setup/setup_legacy_pc differ
--diff --git a/code-exec-alt-4/src/setup/setup_legacy_pc.cc b/code-exec-alt-4/src/setup/setup_legacy_pc.cc
--index 6be51b0..d945537 100644
----- a/code-exec-alt-4/src/setup/setup_legacy_pc.cc
--+++ b/code-exec-alt-4/src/setup/setup_legacy_pc.cc
--@@ -478,7 +478,7 @@ void PC_Setup::build_pmm()
--     si->pmm.free1_base = MMU::align_page(si->lm.app_code + si->lm.app_code_size);
--     si->pmm.free1_top = MMU::align_page(640 * 1024);
--     // Skip VRAM and ROMs
---    si->pmm.free2_base = MMU::align_page(1024 * 1024);
--+    si->pmm.free2_base = MMU::align_page((1024 * 1024) + Traits<Flash>::ADDRESS);
--     si->pmm.free2_top = MMU::align_page(si->lm.app_data);
--     si->pmm.free3_base = MMU::align_page(si->lm.app_data + si->lm.app_data_size);
--     si->pmm.free3_top = MMU::align_page(si->pmm.mem_top);
--diff --git a/code-exec-alt-4/src/setup/setup_legacy_pc.o b/code-exec-alt-4/src/setup/setup_legacy_pc.o
--index e71b73f..26ad5a2 100644
--Binary files a/code-exec-alt-4/src/setup/setup_legacy_pc.o and b/code-exec-alt-4/src/setup/setup_legacy_pc.o differ
--diff --git a/code-exec-alt-4/src/system/system_binding.o b/code-exec-alt-4/src/system/system_binding.o
--index d2553f7..9645ee9 100644
--Binary files a/code-exec-alt-4/src/system/system_binding.o and b/code-exec-alt-4/src/system/system_binding.o differ
--diff --git a/code-exec-alt-4/src/system/system_legacy_pc.o b/code-exec-alt-4/src/system/system_legacy_pc.o
--index 08fbc24..14debcb 100644
--Binary files a/code-exec-alt-4/src/system/system_legacy_pc.o and b/code-exec-alt-4/src/system/system_legacy_pc.o differ
--diff --git a/code-exec-alt-4/src/system/system_scaffold.o b/code-exec-alt-4/src/system/system_scaffold.o
--index 00d418d..f78bc4d 100644
--Binary files a/code-exec-alt-4/src/system/system_scaffold.o and b/code-exec-alt-4/src/system/system_scaffold.o differ
+diff --git a/app/hello/hello_traits.h b/app/hello/hello_traits.h
+index 6faf7f2..6e3dc2e 100644
+--- a/app/hello/hello_traits.h
++++ b/app/hello/hello_traits.h
+@@ -34,7 +34,7 @@ template<> struct Traits<Debug>: public Traits<Build>
+     static const bool error   = true;
+     static const bool warning = true;
+     static const bool info    = false;
+-    static const bool trace   = false;
++    static const bool trace   = true;
+ };
+ 
+ template<> struct Traits<Lists>: public Traits<Build>
+@@ -106,7 +106,7 @@ template<> struct Traits<System>: public Traits<Build>
+     static const bool multithread = (Traits<Build>::CPUS > 1) || (Traits<Application>::MAX_THREADS > 1);
+     static const bool multitask = (mode != Traits<Build>::LIBRARY);
+     static const bool multicore = (Traits<Build>::CPUS > 1) && multithread;
+-    static const bool multiheap = multitask || Traits<Scratchpad>::enabled;
++    static const bool multiheap = multitask || Traits<Scratchpad>::enabled || Traits<Flash>::enabled;
+ 
+     static const unsigned long LIFE_SPAN = 1 * YEAR; // s
+     static const unsigned int DUTY_CYCLE = 1000000; // ppm
+diff --git a/app/producer_consumer/producer_consumer_traits.h b/app/producer_consumer/producer_consumer_traits.h
+index 1c80af0..f558fb9 100644
+--- a/app/producer_consumer/producer_consumer_traits.h
++++ b/app/producer_consumer/producer_consumer_traits.h
+@@ -10,9 +10,9 @@ template<> struct Traits<Build>: public Traits_Tokens
+ {
+     // Basic configuration
+     static const unsigned int MODE = LIBRARY;
+-    static const unsigned int ARCHITECTURE = ARMv7;
+-    static const unsigned int MACHINE = Cortex;
+-    static const unsigned int MODEL = LM3S811;
++    static const unsigned int ARCHITECTURE = IA32;
++    static const unsigned int MACHINE = PC;
++    static const unsigned int MODEL = Legacy_PC;
+     static const unsigned int CPUS = 1;
+     static const unsigned int NODES = 1; // (> 1 => NETWORKING)
+     static const unsigned int EXPECTED_SIMULATION_TIME = 60; // s (0 => not simulated)
+@@ -31,8 +31,8 @@ template<> struct Traits<Build>: public Traits_Tokens
+ // Utilities
+ template<> struct Traits<Debug>: public Traits<Build>
+ {
+-    static const bool error   = true;
+-    static const bool warning = true;
++    static const bool error   = false;
++    static const bool warning = false;
+     static const bool info    = false;
+     static const bool trace   = false;
+ };
+@@ -106,7 +106,7 @@ template<> struct Traits<System>: public Traits<Build>
+     static const bool multithread = (Traits<Build>::CPUS > 1) || (Traits<Application>::MAX_THREADS > 1);
+     static const bool multitask = (mode != Traits<Build>::LIBRARY);
+     static const bool multicore = (Traits<Build>::CPUS > 1) && multithread;
+-    static const bool multiheap = multitask || Traits<Scratchpad>::enabled;
++    static const bool multiheap = false;
+ 
+     static const unsigned long LIFE_SPAN = 1 * YEAR; // s
+     static const unsigned int DUTY_CYCLE = 1000000; // ppm
+diff --git a/include/machine.h b/include/machine.h
+index 7438d8b..677e04f 100644
+--- a/include/machine.h
++++ b/include/machine.h
+@@ -19,6 +19,9 @@
+ #ifdef __SCRATCHPAD_H
+ #include <machine/scratchpad.h>
+ #endif
++#ifdef __FLASH_H
++#include <machine/flash.h>
++#endif
+ #ifdef __FPGA_H
+ #include <machine/fpga.h>
+ #endif
+diff --git a/include/machine/pc/legacy_pc/legacy_pc_traits.h b/include/machine/pc/legacy_pc/legacy_pc_traits.h
+index 7fb89ed..0ee5a4a 100644
+--- a/include/machine/pc/legacy_pc/legacy_pc_traits.h
++++ b/include/machine/pc/legacy_pc/legacy_pc_traits.h
+@@ -134,7 +134,14 @@ template<> struct Traits<Scratchpad>: public Traits<Machine_Common>
+ {
+     static const bool enabled = false;
+     static const unsigned int ADDRESS = 0xa0000; // VGA Graphic mode frame buffer
+-    static const unsigned int SIZE = 96 * 1024;
++    static const unsigned int SIZE = 96 * 1024;  // 96 KB
++};
++
++template<> struct Traits<Flash>: public Traits<Machine_Common>
++{
++    static const bool enabled = true;
++    static const unsigned int ADDRESS = 0xb0000; // mapeada a partir do endereço 0x000b0000
++    static const unsigned int SIZE = 1024 * 1024; // memória FLASH de 1MB  // 1024 KB = 1MB
+ };
+ 
+ template<> struct Traits<FPGA>: public Traits<Machine_Common>
+diff --git a/include/system/config.h b/include/system/config.h
+index e75d5d0..e11a5d1 100644
+--- a/include/system/config.h
++++ b/include/system/config.h
+@@ -7,15 +7,15 @@
+ // ARCHITECTURE, MACHINE, AND APPLICATION SELECTION
+ // This section is generated automatically from makedefs by $EPOS/etc/makefile
+ //============================================================================
+-#define SMOD xxx
+-#define ARCH xxx
+-#define MACH xxx
+-#define MMOD xxx
+-#define APPL xxx
+-#define __mode_xxx__
+-#define __arch_xxx__
+-#define __mach_xxx__
+-#define __mmod_xxx__
++#define SMOD library
++#define ARCH ia32
++#define MACH pc
++#define MMOD legacy_pc
++#define APPL producer_consumer
++#define __mode_library__
++#define __arch_ia32__
++#define __mach_pc__
++#define __mmod_legacy_pc__
+ 
+ //============================================================================
+ // NAMESPACES AND DEFINITIONS
+@@ -94,6 +94,7 @@ namespace EPOS {
+ #define __DISPLAY_H             __HEADER_MACH(display)
+ #define __KEYBOARD_H            __HEADER_MACH(keyboard)
+ #define __SCRATCHPAD_H          __HEADER_MACH(scratchpad)
++#define __FLASH_H               __HEADER_MACH(flash)
+ #define __NIC_H                 __HEADER_MACH(nic)
+ #define __ethernet__
+ #define __FPGA_H                __HEADER_MACH(fpga)
+diff --git a/include/system/traits.h b/include/system/traits.h
+index 5b814d7..c07044a 100644
+--- a/include/system/traits.h
++++ b/include/system/traits.h
+@@ -73,6 +73,7 @@ class Serial_Display;
+ class Keyboard;
+ class Serial_Keyboard;
+ class Scratchpad;
++class Flash;
+ class Watchdog;
+ class GPIO;
+ class I2C;
+diff --git a/include/system/types.h b/include/system/types.h
+index e5e4d0a..7ffdf6d 100644
+--- a/include/system/types.h
++++ b/include/system/types.h
+@@ -10,6 +10,7 @@ __BEGIN_API
+ // Memory allocators
+ enum System_Allocator { SYSTEM };
+ enum Scratchpad_Allocator { SCRATCHPAD };
++enum Flash_Allocator { FLASH };
+ enum Color {
+     COLOR_0,  COLOR_1,  COLOR_2,  COLOR_3,  COLOR_4,  COLOR_5,  COLOR_6,  COLOR_7,
+     COLOR_8,  COLOR_9,  COLOR_10, COLOR_11, COLOR_12, COLOR_13, COLOR_14, COLOR_15,
+@@ -47,6 +48,9 @@ void * operator new[](size_t, const EPOS::System_Allocator &);
+ void * operator new(size_t, const EPOS::Scratchpad_Allocator &);
+ void * operator new[](size_t, const EPOS::Scratchpad_Allocator &);
+ 
++void * operator new(size_t, const EPOS::Flash_Allocator &);
++void * operator new[](size_t, const EPOS::Flash_Allocator &);
++
+ void * operator new(size_t, const EPOS::Color &);
+ void * operator new[](size_t, const EPOS::Color &);
+ 
+@@ -169,6 +173,7 @@ enum
+     RTC_ID,
+     EEPROM_ID,
+     SCRATCHPAD_ID,
++    FLASH_ID,
+     UART_ID,
+     DISPLAY_ID,
+     KEYBOARD_ID,
+@@ -198,6 +203,7 @@ template<> struct Type<PCI> { static const Type_Id ID = PCI_ID; };
+ template<> struct Type<Display> { static const Type_Id ID = DISPLAY_ID; };
+ template<> struct Type<Keyboard> { static const Type_Id ID = KEYBOARD_ID; };
+ template<> struct Type<Scratchpad> { static const Type_Id ID = SCRATCHPAD_ID; };
++template<> struct Type<Flash> { static const Type_Id ID = FLASH_ID; };
+ template<> struct Type<Ethernet> { static const Type_Id ID = NIC_ID; };
+ template<> struct Type<IEEE802_15_4> { static const Type_Id ID = NIC_ID; };
+ 
+diff --git a/makedefs b/makedefs
+index f456b07..fcb762b 100644
+--- a/makedefs
++++ b/makedefs
+@@ -96,7 +96,7 @@ COMP_PREFIX		= $($(ARCH)_COMP_PREFIX)
+ pc_CC_FLAGS		:= -m32 -Wa,--32
+ pc_AS_FLAGS		:= --32
+ pc_LD_FLAGS		:= -m elf_i386
+-pc_EMULATOR		= qemu-system-i386 -smp $(CPUS) -m $(MEM_SIZE)k -nographic -no-reboot -drive format=raw,index=0,if=floppy,read-only,file=
++pc_EMULATOR		= qemu-system-i386 -smp $(CPUS) -m $(MEM_SIZE)k -nographic -vga std -no-reboot -drive format=raw,index=0,if=floppy,read-only,file=
+ pc_DEBUGGER		:= gdb
+ pc_FLASHER		:=
+ pc_MAGIC		:= --nmagic
+diff --git a/src/architecture/ia32/ia32_mmu_init.cc b/src/architecture/ia32/ia32_mmu_init.cc
+index c762ecb..35c70a8 100644
+--- a/src/architecture/ia32/ia32_mmu_init.cc
++++ b/src/architecture/ia32/ia32_mmu_init.cc
+@@ -11,13 +11,30 @@ void MMU::init()
+ 
+     System_Info * si = System::info();
+ 
+-    db<Init, MMU>(INF) << "MMU::memory={base=" << reinterpret_cast<void *>(si->pmm.mem_base) << ",size="
++
++    db<Init, MMU>(TRC) << "MMU::memory={top=" << reinterpret_cast<void *>(si->pmm.mem_top) << endl;
++
++    db<Init, MMU>(TRC) << "MMU::memory={base=" << reinterpret_cast<void *>(si->pmm.mem_base) << ",size="
+                        << (si->bm.mem_top - si->bm.mem_base) / 1024 << "KB}" << endl;
+-    db<Init, MMU>(INF) << "MMU::free1={base=" << reinterpret_cast<void *>(si->pmm.free1_base) << ",size="
++
++
++
++
++    db<Init, MMU>(TRC) << "MMU::free1={top=" << reinterpret_cast<void *>(si->pmm.free1_top) << endl;
++
++    db<Init, MMU>(TRC) << "MMU::free1={base=" << reinterpret_cast<void *>(si->pmm.free1_base) << ",size="
+                        << (si->pmm.free1_top - si->pmm.free1_base) / 1024 << "KB}" << endl;
+-    db<Init, MMU>(INF) << "MMU::free2={base=" << reinterpret_cast<void *>(si->pmm.free2_base) << ",size="
++    
++
++
++    db<Init, MMU>(TRC) << "MMU::free2={top=" << reinterpret_cast<void *>(si->pmm.free2_top) << endl;
++   
++    db<Init, MMU>(TRC) << "MMU::free2={base=" << reinterpret_cast<void *>(si->pmm.free2_base) << ",size="
+                        << (si->pmm.free2_top - si->pmm.free2_base) / 1024 << "KB}" << endl;
+-    db<Init, MMU>(INF) << "MMU::free3={base=" << reinterpret_cast<void *>(si->pmm.free3_base) << ",size="
++    
++    
++    db<Init, MMU>(TRC) << "MMU::free3={top=" << reinterpret_cast<void *>(si->pmm.free3_top) << endl;
++    db<Init, MMU>(TRC) << "MMU::free3={base=" << reinterpret_cast<void *>(si->pmm.free3_base) << ",size="
+                        << (si->pmm.free3_top - si->pmm.free3_base) / 1024 << "KB}" << endl;
+ 
+     // BIG NOTE HERE: INIT (i.e. this program) will be part of the free
+@@ -88,6 +105,7 @@ void MMU::init()
+             frame += MMU::PAGE_SIZE;
+         }
+     } else {
++        db<Init, MMU>(TRC) << "NOT COLORFUL" << endl;
+         // Insert all free memory into the _free[WHITE] list
+         free(si->pmm.free1_base, pages(si->pmm.free1_top - si->pmm.free1_base));
+         free(si->pmm.free2_base, pages(si->pmm.free2_top - si->pmm.free2_base));
+diff --git a/src/boot/boot_legacy_pc.S b/src/boot/boot_legacy_pc.S
+index cac34d4..9d3eac3 100644
+--- a/src/boot/boot_legacy_pc.S
++++ b/src/boot/boot_legacy_pc.S
+@@ -1,217 +1,221 @@
++# 1 "boot_legacy_pc.S"
++# 1 "<built-in>"
++# 1 "<command-line>"
++# 1 "boot_legacy_pc.S"
+ ;==============================================================================
+ ; EPOS BOOT STRAP
+ ;
+ ; Desc: Reads system and applications from disk, initializes ix86
+-;	protected mode, get the size of memory from BIOS and jump into
+-;	SETUP. The boot strap is loaded by BIOS at 0x07c00
++; protected mode, get the size of memory from BIOS and jump into
++; SETUP. The boot strap is loaded by BIOS at 0x07c00
+ ;==============================================================================
+ 
+-; CONSTANTS                                                            
++; CONSTANTS
+ ;==============================================================================
+-; PHYSICAL MEMORY MAP 
+-; 0x0000 0000 -+-----------------------+ BOOT_IDT 
+-;              | IDT (4 K)             | 
+-; 0x0000 1000 -+-----------------------+ BOOT_GDT 
+-;              | GDT (4 K)             | 
+-; 0x0000 2000 -+-----------------------+ 
+-;              | SMP TRAMP. STACK (4 K)| 
++; PHYSICAL MEMORY MAP
++; 0x0000 0000 -+-----------------------+ BOOT_IDT
++; | IDT (4 K) |
++; 0x0000 1000 -+-----------------------+ BOOT_GDT
++; | GDT (4 K) |
++; 0x0000 2000 -+-----------------------+
++; | SMP TRAMP. STACK (4 K)|
+ ; 0x0000 3000 -+-----------------------+ TRAMPOLINE_STACK, TRAMPOLINE_CODE
+-;              | SMP TRAMPOLINE (4 K)  | 
+-; 0x0000 4000 -+-----------------------+ 
+-;              :                       : 
+-;              | BOOT STACK (15 K)     | 
+-; 0x0000 7c00 -+-----------------------+ BOOTSTRAP_STACK, BOOTSTRAP_CODE 
+-;              | BOOT CODE (512 b)     | 
+-; 0x0000 7e00 -+-----------------------+ 
+-;              | RESERVED (512 b)      | 
+-; 0x0000 8000 -+-----------------------+ DISK_IMAGE 
+-;              | DISK IMAGE (608 K)    | 
+-;              :                       : 
+-;              |                       | 
+-; 0x000a 0000 -+-----------------------+ 
+-;              | UNUSED (380K)         |
+-;              :                       : 
+-;              |                       | 
+-; 0x000f f000 -+-----------------------+ 
+-BOOT_IDT         = 0x0000
+-BOOT_GDT         = 0x1000
++; | SMP TRAMPOLINE (4 K) |
++; 0x0000 4000 -+-----------------------+
++; : :
++; | BOOT STACK (15 K) |
++; 0x0000 7c00 -+-----------------------+ BOOTSTRAP_STACK, BOOTSTRAP_CODE
++; | BOOT CODE (512 b) |
++; 0x0000 7e00 -+-----------------------+
++; | RESERVED (512 b) |
++; 0x0000 8000 -+-----------------------+ DISK_IMAGE
++; | DISK IMAGE (608 K) |
++; : :
++; | |
++; 0x000a 0000 -+-----------------------+
++; | UNUSED (380K) |
++; : :
++; | |
++; 0x000f f000 -+-----------------------+
++BOOT_IDT = 0x0000
++BOOT_GDT = 0x1000
+ TRAMPOLINE_STACK = 0x3000 ; SMP trampoline stack (descendent, 4K)
+-TRAMPOLINE_CODE  = 0x3000 ; SMP trampoline code (4K) 
+-BOOTSTRAP_STACK  = 0x7c00 ; Bootstrap stack (descendent, 15K)
+-BOOTSTRAP_CODE   = 0x7c00 ; Bootstrap code (512 bytes)        
+-DISK_IMAGE 	 = 0x8000 ; = BOOT_IMAGE_PHY_ADDR from memory_map 
++TRAMPOLINE_CODE = 0x3000 ; SMP trampoline code (4K)
++BOOTSTRAP_STACK = 0x7c00 ; Bootstrap stack (descendent, 15K)
++BOOTSTRAP_CODE = 0x7c00 ; Bootstrap code (512 bytes)
++DISK_IMAGE = 0x8000 ; = BOOT_IMAGE_PHY_ADDR from memory_map
+ 
+-; The size of a disk sector in bytes 
+-DISK_SECT_SIZE =         512     
++; The size of a disk sector in bytes
++DISK_SECT_SIZE = 512
+ 
+ ; The size of ELF object's header in bytes (GCC dependent)
+ ; Can be determined with objdump -p $(EPOS)/src/setup/pc_setup | sed -n -e 's/^ *LOAD off *\(0x.*\) vaddr.*$/\1/ p' | head -1
+ ; It is automatically adjusted by make (see makefile)
+-ELF_HDR_SIZE =           XXX
+-
+-; DISK IMAGE LAYOUT 
+-; -+-----------------------+ DISK_IMAGE_SYS_INFO 
+-;  | SYS_INFO (512 bytes)  | 
+-; -+-----------------------+ DISK_IMAGE_SETUP 
+-;  | SETUP                 | 
+-;  :                       : 
+-; -+-----------------------+ 
+-;  | SYSTEM                | 
+-;  :                       : 
+-; -+-----------------------+ 
+-;  | INIT                  | 
+-;  :                       : 
+-; -+-----------------------+ 
+-;  | LOADER/APP1           | 
+-;  :                       : 
+-; -+-----------------------+ 
+-;  | APP1                  | 
+-;  :                       : 
+-; -+-----------------------+ 
+-;  :                       : 
+-; -+-----------------------+ 
+-;  | APPn                  | 
+-;  :                       : 
+-; -+-----------------------+ 
+-; BOOT IMAGE LAYOUT 
+-; System Information 
+-DISK_IMAGE_SYS_INFO =    DISK_IMAGE
+-
+-; System Information 
+-DISK_IMAGE_SETUP =       (DISK_IMAGE + DISK_SECT_SIZE)
+-
+-; SETUP entry point 
+-SETUP_ENTRY =            (DISK_IMAGE_SETUP + ELF_HDR_SIZE)
++ELF_HDR_SIZE = 0x00000080
++
++; DISK IMAGE LAYOUT
++; -+-----------------------+ DISK_IMAGE_SYS_INFO
++; | SYS_INFO (512 bytes) |
++; -+-----------------------+ DISK_IMAGE_SETUP
++; | SETUP |
++; : :
++; -+-----------------------+
++; | SYSTEM |
++; : :
++; -+-----------------------+
++; | INIT |
++; : :
++; -+-----------------------+
++; | LOADER/APP1 |
++; : :
++; -+-----------------------+
++; | APP1 |
++; : :
++; -+-----------------------+
++; : :
++; -+-----------------------+
++; | APPn |
++; : :
++; -+-----------------------+
++; BOOT IMAGE LAYOUT
++; System Information
++DISK_IMAGE_SYS_INFO = DISK_IMAGE
++
++; System Information
++DISK_IMAGE_SETUP = (DISK_IMAGE + DISK_SECT_SIZE)
++
++; SETUP entry point
++SETUP_ENTRY = (DISK_IMAGE_SETUP + ELF_HDR_SIZE)
+ 
+ ;==============================================================================
+ ; DEFINITIONS
+ ;==============================================================================
+ ; 8086 segment addresses
+-IMAGE_SEG       = DISK_IMAGE >> 4
+-INFO_SEG        = DISK_IMAGE_SYS_INFO >> 4
+-	
++IMAGE_SEG = DISK_IMAGE >> 4
++INFO_SEG = DISK_IMAGE_SYS_INFO >> 4
++
+ .text
+-     
++
+ ;==============================================================================
+ ; MAIN
+ ;==============================================================================
+ entry main
+ main:
+-		cli			; disable interrupts
+-		xor	ax,ax		; data segment base = 0x00000
+-		mov	ds,ax
+-		mov	es,ax
+-		mov	ss,ax
+-                mov     sp,#BOOTSTRAP_STACK	; set stack pointer
++  cli ; disable interrupts
++  xor ax,ax ; data segment base = 0x00000
++  mov ds,ax
++  mov es,ax
++  mov ss,ax
++                mov sp,#BOOTSTRAP_STACK ; set stack pointer
+ 
+ ; Prepare a trampoline for SMP initialization
+-		call	setup_trampoline
++  call setup_trampoline
+ 
+ ; Load the boot image from the disk into "DISK_IMAGE"
+-                mov     si,#msg_loading
+-		call	print_msg
+-		push	es
+-                mov     ax,#IMAGE_SEG
+-		mov	es,ax		; don't try to load es directly;
+-                mov     bx,#0		; set es:bx to DISK_IMAGE
+-                mov     ax,[n_sec_image]
+-                mov     cx,#0x0002	; starts at track #0, sector #2,
+-                mov     dx,#0x0000	;  side #0, first drive
+-                call    load_image
+-		pop	es
+-                mov     si,#msg_done
+-		call	print_msg
+-		
++                mov si,#msg_loading
++  call print_msg
++  push es
++                mov ax,#IMAGE_SEG
++  mov es,ax ; don't try to load es directly;
++                mov bx,#0 ; set es:bx to DISK_IMAGE
++                mov ax,[n_sec_image]
++                mov cx,#0x0002 ; starts at track #0, sector #2,
++                mov dx,#0x0000 ; side #0, first drive
++                call load_image
++  pop es
++                mov si,#msg_done
++  call print_msg
++
+ ; Stop the drive motor
+-                call	stop_drive   
++                call stop_drive
+ 
+ ; Get extended memory size (in K)
+-;		xor	dx,dx
+-;		mov	ah,#0x88
+-;		int	0x15		; what if memory size > 64 Mb?
+-;		push	ds
+-;		push	#INFO_SEG
+-;		pop	ds
+-;		mov	[0],ax
+-;		mov	[2],dx
+-;		pop	ds
++; xor dx,dx
++; mov ah,#0x88
++; int 0x15 ; what if memory size > 64 Mb?
++; push ds
++; push #INFO_SEG
++; pop ds
++; mov [0],ax
++; mov [2],dx
++; pop ds
+ 
+ ; Say hello;
+-		mov	si,#msg_hello
+-		call	print_msg
++  mov si,#msg_hello
++  call print_msg
+ 
+ ; Enable A20 bus line
+-		call	enable_a20
+-		
++  call enable_a20
++
+ ; Zero IDT and GDT
+                 cld
+-                xor	ax,ax
+-                mov	cx,#0x1000	; IDT + GDT = 8K (4K WORDS)
+-                mov	di,#BOOT_IDT	; initial address (relative to ES)
+-		rep	   		; zero IDT and GDT with AX
+-		stosw
++                xor ax,ax
++                mov cx,#0x1000 ; IDT + GDT = 8K (4K WORDS)
++                mov di,#BOOT_IDT ; initial address (relative to ES)
++  rep ; zero IDT and GDT with AX
++  stosw
+ 
+ ; Set GDT
+-                mov	si,#GDT_CODE	; Set GDT[1]=GDT_CODE and
+-                mov	di,#BOOT_GDT	; GDT[2]=GDT_DATA
+-                add	di,#8		; offset GDT[1] = 8
+-                mov	cx,#8		; sizeof GDT[1] + GDT[2] = 8 WORDS 
+-		rep			; move WORDS
+-		movsw
++                mov si,#GDT_CODE ; Set GDT[1]=GDT_CODE and
++                mov di,#BOOT_GDT ; GDT[2]=GDT_DATA
++                add di,#8 ; offset GDT[1] = 8
++                mov cx,#8 ; sizeof GDT[1] + GDT[2] = 8 WORDS
++  rep ; move WORDS
++  movsw
+ 
+ ; Set GDTR
+-                lgdt	GDTR
+-                   
++                lgdt GDTR
++
+ ; Enable Protected Mode
+-                mov	eax,cr0
+-                or	al,#0x01	; set PE flag and MP flag
+-                mov	cr0,eax
+-     
++                mov eax,cr0
++                or al,#0x01 ; set PE flag and MP flag
++                mov cr0,eax
++
+ ; Adjust selectors
+-                mov	bx,#2 * 8	; adjust data selectors to use
+-                mov	ds,bx		; GDT[2] (DATA) with RPL = 00
+-                mov	es,bx
+-                mov     fs,bx
+-                mov     gs,bx
+-                mov	ss,bx
++                mov bx,#2 * 8 ; adjust data selectors to use
++                mov ds,bx ; GDT[2] (DATA) with RPL = 00
++                mov es,bx
++                mov fs,bx
++                mov gs,bx
++                mov ss,bx
+ 
+ ; As Linux as86 can't generate 32 bit instructions, we have to code it by hand.
+ ; The instruction below is a inter segment jump to GDT[GDT_CODE]:SETUP.
+ ; Jump into "SETUP" (actually ix86 Protected Mode starts here)
+-;		jmp	0x0008:#SETUP_ENTRY
+-		.byte	0x66
+-		.byte	0xEA
+-		.long	SETUP_ENTRY
+-		.word	0x0008
+-		
++; jmp 0x0008:#SETUP_ENTRY
++  .byte 0x66
++  .byte 0xEA
++  .long SETUP_ENTRY
++  .word 0x0008
++
+ ;==============================================================================
+ ; PRINT_MSG
+ ;
+ ; Desc: Print a \0 terminated string on the screen using the BIOS
+-;       Message must end with 00h
++; Message must end with 00h
+ ;
+-; Parm: si  -> pointer to the string
++; Parm: si -> pointer to the string
+ ;==============================================================================
+ print_msg:
+                 pushf
+-                push	ax
+-                push	bx
+-                push	bp
++                push ax
++                push bx
++                push bp
+                 cld
+ 
+-print_char:   
++print_char:
+                 lodsb
+-                cmp	al,#0
+-                jz	end_print
+-                mov	ah,#0x0E       
+-                mov	bx,#0x0007
+-                int	0x10
+-                jmp	print_char
+-
+-end_print:              
+-		pop	bp
+-                pop	bx
+-                pop	ax
++                cmp al,#0
++                jz end_print
++                mov ah,#0x0E
++                mov bx,#0x0007
++                int 0x10
++                jmp print_char
++
++end_print:
++  pop bp
++                pop bx
++                pop ax
+                 popf
+                 ret
+ 
+@@ -222,10 +226,10 @@ end_print:
+ ;==============================================================================
+ say_z:
+                 pushf
+-                push	si
+-                mov	si,#msg_z
+-                call	print_msg
+-                pop	si
++                push si
++                mov si,#msg_z
++                call print_msg
++                pop si
+                 popf
+                 ret
+ 
+@@ -236,13 +240,13 @@ say_z:
+ ;==============================================================================
+ stop_drive:
+                 pushf
+-                push	ax
+-                push	dx
+-                mov	dx,#0x03F2
+-                xor	al,al
+-                out	dx,al
+-                pop	dx
+-                pop	ax
++                push ax
++                push dx
++                mov dx,#0x03F2
++                xor al,al
++                out dx,al
++                pop dx
++                pop ax
+                 popf
+                 ret
+ 
+@@ -251,99 +255,99 @@ stop_drive:
+ ;
+ ; Desc: Load a single sector from disk using the BIOS.
+ ;
+-; Parm: es:bx  -> buffer
+-;       cx     -> track (ch) and sector number (cl)
+-;       dx     -> side (dh) and drive number (dl)
++; Parm: es:bx -> buffer
++; cx -> track (ch) and sector number (cl)
++; dx -> side (dh) and drive number (dl)
+ ;==============================================================================
+ load_sector:
+-		pushf
+-		push	ax
++  pushf
++  push ax
+ 
+-                mov     ax,#0x0201      ; function #2, load 1 sector
+-                int     0x13
+-                cli                     ; int 0x13 sets IF
+-                jc      ls_disk_error	; if CF=1, error on reading
++                mov ax,#0x0201 ; function #2, load 1 sector
++                int 0x13
++                cli ; int 0x13 sets IF
++                jc ls_disk_error ; if CF=1, error on reading
+ 
+-		pop	ax
+-		popf
++  pop ax
++  popf
+                 ret
+ 
+ ls_disk_error:
+-                mov     si,#msg_disk_error
+-                call    print_msg      ; print error msg if disk is bad
+-                call    stop_drive
+-ls_disk_halt:            
+-                jmp     ls_disk_halt   ; halt 
++                mov si,#msg_disk_error
++                call print_msg ; print error msg if disk is bad
++                call stop_drive
++ls_disk_halt:
++                jmp ls_disk_halt ; halt
+ 
+ ;========================================================================
+ ; LOAD_IMAGE
+ ;
+ ; Desc: Load the the image from disk into a buffer.
+ ;
+-; Parm: es:bx  -> buffer
+-;       ax     -> number of sectors to load
+-;       cx     -> initial track (ch) and sector number (cl)
+-;       dx     -> inital side (dh) and drive number (dl)
++; Parm: es:bx -> buffer
++; ax -> number of sectors to load
++; cx -> initial track (ch) and sector number (cl)
++; dx -> inital side (dh) and drive number (dl)
+ ;========================================================================
+-load_image:	
+-		pushf
+-		push	ax
+-		push	bx
+-		push	cx
+-		push	dx
+-		push	es
++load_image:
++  pushf
++  push ax
++  push bx
++  push cx
++  push dx
++  push es
+ 
+ li_check:
+-                cmp     ax,#0
+-                jz      li_done
+-                call    load_sector
+-		push	ax
+-		mov	ax,es
+-		add	ax,#0x20	; get next buffer position
+-		mov	es,ax
+-		pop	ax
+-		dec	ax
+-                inc     cl              ; get next sector
+-                cmp     cl,[n_sec_track]; was this last sector?
+-                jnz     li_next
+-                mov     cl,#1
+-                inc     dh              ; get next side
+-                cmp     dh,#2           ; read both?
+-                jnz     li_next
+-                mov     dh,#0
+-                inc     ch              ; get next track
+-                call    say_z
++                cmp ax,#0
++                jz li_done
++                call load_sector
++  push ax
++  mov ax,es
++  add ax,#0x20 ; get next buffer position
++  mov es,ax
++  pop ax
++  dec ax
++                inc cl ; get next sector
++                cmp cl,[n_sec_track]; was this last sector?
++                jnz li_next
++                mov cl,#1
++                inc dh ; get next side
++                cmp dh,#2 ; read both?
++                jnz li_next
++                mov dh,#0
++                inc ch ; get next track
++                call say_z
+ li_next:
+-                jmp     li_check
++                jmp li_check
+ 
+ li_done:
+-		pop	es
+-		pop	dx
+-		pop	cx
+-		pop	bx
+-		pop	ax
+-		popf
++  pop es
++  pop dx
++  pop cx
++  pop bx
++  pop ax
++  popf
+                 ret
+ 
+ ;========================================================================
+ ; ENABLE_A20
+ ;
+ ; Desc: Enables the 20th address bus line by writing some bytes to the
+-;       keyboard port.
++; keyboard port.
+ ;========================================================================
+ enable_a20:
+                 pushf
+-                push	ax
++                push ax
+ 
+- 		call	keyb_flush	; empty keyb controller
+-		mov	al,#0xd1	; keyb->cmd = write
+-		out	#0x64,al
+-		call	keyb_flush
+-		mov	al,#0xdf	; keyb->data = 0xdf
+-		outb	#0x60,al
+-		call	keyb_flush
++   call keyb_flush ; empty keyb controller
++  mov al,#0xd1 ; keyb->cmd = write
++  out #0x64,al
++  call keyb_flush
++  mov al,#0xdf ; keyb->data = 0xdf
++  outb #0x60,al
++  call keyb_flush
+ 
+-                pop	ax
++                pop ax
+                 popf
+                 ret
+ 
+@@ -354,23 +358,23 @@ enable_a20:
+ ;========================================================================
+ keyb_flush:
+                 pushf
+-                push	ax
+-
+-kf_stat:	call    kf_delay
+-		in      al,#0x64        ; get keyb status
+-	        test    al,#1           ; output buffer full?
+-	        jz      kf_emptyt
+-	        call    kf_delay
+-	        in      al,#0x60        ; get data
+-	        jmp     kf_stat
+-kf_emptyt:      test    al,#2           ; input buffer full?
+-	        jnz     kf_stat
+-
+-                pop	ax
++                push ax
++
++kf_stat: call kf_delay
++  in al,#0x64 ; get keyb status
++         test al,#1 ; output buffer full?
++         jz kf_emptyt
++         call kf_delay
++         in al,#0x60 ; get data
++         jmp kf_stat
++kf_emptyt: test al,#2 ; input buffer full?
++         jnz kf_stat
++
++                pop ax
+                 popf
+                 ret
+ 
+-kf_delay:	ret
++kf_delay: ret
+ 
+ ;========================================================================
+ ; SETUP_TRAMPOLINE
+@@ -378,111 +382,111 @@ kf_delay:	ret
+ ; Desc: copy the SMP trampoline code to a page-aligned address
+ ;========================================================================
+ setup_trampoline:
+-		mov si,#trampoline
+-		mov di,#TRAMPOLINE_CODE
+-		cld
+-		mov cx,#100
+-		rep
+-		movsb
+-		ret
++  mov si,#trampoline
++  mov di,#TRAMPOLINE_CODE
++  cld
++  mov cx,#100
++  rep
++  movsb
++  ret
+ 
+ ;========================================================================
+ ; TRAMPOLINE
+ ;
+ ; Desc: "trampolines" additional CPUs into protected mode in SMP
+-;	configurations							=
++; configurations =
+ ;========================================================================
+ trampoline:
+-		cli ; disable interrupts
+-		xor ax,ax ; data segment base = 0x00000
+-		mov ds,ax
+-		mov es,ax
+-		mov ss,ax
++  cli ; disable interrupts
++  xor ax,ax ; data segment base = 0x00000
++  mov ds,ax
++  mov es,ax
++  mov ss,ax
+                 mov sp,#TRAMPOLINE_STACK ; set stack pointer
+-	;; 		mov [0xB8004], #(0x32 & 0xFF) ; 
++ ;; mov [0xB8004], #(0x32 & 0xFF) ;
+ 
+ ; Set GDTR
+-                lgdt	GDTR
+-                   
++                lgdt GDTR
++
+ ; Enable Protected Mode
+-                mov	eax,cr0
+-                or	al,#0x01	; set PE flag and MP flag
+-                mov	cr0,eax
+-     
++                mov eax,cr0
++                or al,#0x01 ; set PE flag and MP flag
++                mov cr0,eax
++
+ ; Adjust selectors
+-                mov	bx,#2 * 8	; adjust data selectors to use
+-                mov	ds,bx		; GDT[2] (DATA) with RPL = 00
+-                mov	es,bx
+-                mov     fs,bx
+-                mov     gs,bx
+-                mov	ss,bx
++                mov bx,#2 * 8 ; adjust data selectors to use
++                mov ds,bx ; GDT[2] (DATA) with RPL = 00
++                mov es,bx
++                mov fs,bx
++                mov gs,bx
++                mov ss,bx
+ 
+ ; As Linux as86 can't generate 32 bit instructions, we have to code it by hand.
+ ; The instruction below is a inter segment jump to GDT[GDT_CODE]:SETUP.
+ ; Jump into "SETUP" (actually ix86 Protected Mode starts here)
+-;		jmp	0x0008:#SETUP_ENTRY
+-		.byte	0x66
+-		.byte	0xEA
+-		.long	SETUP_ENTRY
+-		.word	0x0008
+-			
++; jmp 0x0008:#SETUP_ENTRY
++  .byte 0x66
++  .byte 0xEA
++  .long SETUP_ENTRY
++  .word 0x0008
++
+ ;==============================================================================
+ ; DATA SEGMENT
+ ;==============================================================================
+ GDTR:
+-		.word	0x0FFF		; GDT limit - 4K
+-		.long	0x00001000	; GDT base address - also 4K
++  .word 0x0FFF ; GDT limit - 4K
++  .long 0x00001000 ; GDT base address - also 4K
+ 
+ GDT_CODE:
+-		.word 0xFFFF           ; limit 15:00
+-                .word 0x0000           ; base 15:00
+-                .byte 0x00             ; base 23:16
+-                .byte 0x9A             ; 10011001 flags (p/dpl/s/code/c/w/a)
+-                .byte 0xCF             ; 11001111 (g/d/0/avl) & limit 19:16
+-                .byte 0x00             ; base 31:24
++  .word 0xFFFF ; limit 15:00
++                .word 0x0000 ; base 15:00
++                .byte 0x00 ; base 23:16
++                .byte 0x9A ; 10011001 flags (p/dpl/s/code/c/w/a)
++                .byte 0xCF ; 11001111 (g/d/0/avl) & limit 19:16
++                .byte 0x00 ; base 31:24
+ 
+ GDT_DATA:
+-		.word 0xFFFF           ; limit 15:00
+-                .word 0x0000           ; base 15:00
+-                .byte 0x00             ; base 23:16
+-                .byte 0x92             ; 10010011 flags (p/dpl/s/data/e/w/a)
+-                .byte 0xCF             ; 11001111 (g/d/0/avl) & limit 19:16
+-                .byte 0x00             ; base 31:24
++  .word 0xFFFF ; limit 15:00
++                .word 0x0000 ; base 15:00
++                .byte 0x00 ; base 23:16
++                .byte 0x92 ; 10010011 flags (p/dpl/s/data/e/w/a)
++                .byte 0xCF ; 11001111 (g/d/0/avl) & limit 19:16
++                .byte 0x00 ; base 31:24
+ 
+ msg_disk_error:
+-		.ascii "Disk error: system halted;"
+-		.word 0x0D0A
+-		.byte 0x00
++  .ascii "Disk error: system halted;"
++  .word 0x0D0A
++  .byte 0x00
+ 
+ msg_hello:
+-		.ascii  "This is EPOS!"
+-		.word 0x0D0A
+-		.byte 0x00
++  .ascii "This is EPOS!"
++  .word 0x0D0A
++  .byte 0x00
+ 
+ msg_z:
+-		.ascii "."
+-		.byte 0x00
++  .ascii "."
++  .byte 0x00
+ 
+ msg_loading:
+                 .ascii "Loading EPOS "
+-		.byte 0x00
++  .byte 0x00
+ 
+-msg_done:      
+-		.ascii " done;"
+-		.word 0x0D0A
+-		.byte 0x00
++msg_done:
++  .ascii " done;"
++  .word 0x0D0A
++  .byte 0x00
+ 
+ ; The following is to enable "sys" to define the actual size of the image.
+ ; And the floppy geometry.
+ ; The default values 19 and 360 will only be used if you don't use sys.
+-		.align 502
++  .align 502
+ system_info:
+                 .word 0
+                 .word 0
+ n_sec_track:
+                 .word 19
+ n_sec_image:
+-		.word 360
++  .word 360
+ 
+ ; Tag the boot sector as "bootable"
+-		.word 0xAA55
++  .word 0xAA55
+diff --git a/src/machine/pc/pc_machine_init.cc b/src/machine/pc/pc_machine_init.cc
+index 0c01c62..cd875c1 100644
+--- a/src/machine/pc/pc_machine_init.cc
++++ b/src/machine/pc/pc_machine_init.cc
+@@ -20,6 +20,9 @@ void Machine::init()
+     if(Traits<Scratchpad>::enabled)
+         Scratchpad::init();
+ 
++    if(Traits<Flash>::enabled)
++        Flash::init();
++
+ #ifdef __KEYBOARD_H
+     if(Traits<Keyboard>::enabled)
+         Keyboard::init();
+diff --git a/src/setup/setup_legacy_pc.cc b/src/setup/setup_legacy_pc.cc
+index 6be51b0..d945537 100644
+--- a/src/setup/setup_legacy_pc.cc
++++ b/src/setup/setup_legacy_pc.cc
+@@ -478,7 +478,7 @@ void PC_Setup::build_pmm()
+     si->pmm.free1_base = MMU::align_page(si->lm.app_code + si->lm.app_code_size);
+     si->pmm.free1_top = MMU::align_page(640 * 1024);
+     // Skip VRAM and ROMs
+-    si->pmm.free2_base = MMU::align_page(1024 * 1024);
++    si->pmm.free2_base = MMU::align_page((1024 * 1024) + Traits<Flash>::ADDRESS);
+     si->pmm.free2_top = MMU::align_page(si->lm.app_data);
+     si->pmm.free3_base = MMU::align_page(si->lm.app_data + si->lm.app_data_size);
+     si->pmm.free3_top = MMU::align_page(si->pmm.mem_top);
+diff --git a/tools/eposcfg/eposcfg.cc b/tools/eposcfg/eposcfg.cc
+index 1947348..89d2c5f 100644
+--- a/tools/eposcfg/eposcfg.cc
++++ b/tools/eposcfg/eposcfg.cc
+@@ -22,7 +22,7 @@ using namespace EPOS::S::U;
+ 
+ // Constants
+ const unsigned int TOKENS = 24;
+-const unsigned int COMPONENTS = 62;
++const unsigned int COMPONENTS = 63;
+ const unsigned int STRING_SIZE = 128;
+ 
+ // Configuration tokens (integer tokens first, marked by INT_TOKENS)
+@@ -76,6 +76,7 @@ char components[COMPONENTS][STRING_SIZE] = {
+     "Keyboard",
+     "Serial_Keyboard",
+     "Scratchpad",
++    "Flash",
+     "GPIO",
+     "I2C",
+     "ADC",
+@@ -337,6 +338,7 @@ void populate_strings()
+     if(Traits<Keyboard>::enabled)       enable_component("Keyboard");
+     if(Traits<Serial_Keyboard>::enabled)enable_component("Serial_Keyboard");
+     if(Traits<Scratchpad>::enabled)     enable_component("Scratchpad");
++    if(Traits<Flash>::enabled)          enable_component("Flash");
+     if(Traits<GPIO>::enabled)           enable_component("GPIO");
+     if(Traits<I2C>::enabled)            enable_component("I2C");
+     if(Traits<ADC>::enabled)            enable_component("ADC");
